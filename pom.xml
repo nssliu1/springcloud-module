@@ -9,6 +9,10 @@
   <version>1.0-SNAPSHOT</version>
     <modules>
       <module>entity</module>
+      <module>eureka</module>
+      <module>server</module>
+      <module>feign-customer</module>
+      <module>rest-ribbon-customer</module>
     </modules>
     <packaging>pom</packaging>
 
