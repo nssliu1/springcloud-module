@@ -4,13 +4,13 @@
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="springcloudmodule" />
+          <element id="module-output" name="allproject" />
         </element>
       </element>
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/target/springcloudmodule/META-INF/MANIFEST.MF" />
       </element>
-      <element id="javaee-facet-resources" facet="springcloudmodule/web/Web" />
+      <element id="javaee-facet-resources" facet="allproject/web/Web" />
     </root>
   </artifact>
 </component>
