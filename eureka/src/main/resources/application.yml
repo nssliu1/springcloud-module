@@ -1,0 +1,17 @@
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+#ribbon:
+#  ConnetcTimeout: 1200
+#  readTime: 300
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 2
+#  OkToRetryOnAllOperations: true

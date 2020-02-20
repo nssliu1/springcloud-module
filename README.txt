@@ -1,0 +1,2 @@
+该springcloud是利用module形式创建父子级别
+1采用依赖类模块化形式

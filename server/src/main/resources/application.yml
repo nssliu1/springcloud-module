@@ -1,0 +1,16 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+server:
+  port: 8763
+spring:
+  application:
+    name: service-hi
+
+#ribbon:
+#  ConnetcTimeout: 1200
+#  readTime: 300
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 2
+#  OkToRetryOnAllOperations: true
