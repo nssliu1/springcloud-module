@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="dataserver" />
         <module name="entity" />
-        <module name="entitys" />
         <module name="eureka" />
         <module name="feign-customer" />
         <module name="rest-ribbon-customer" />
@@ -15,8 +15,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="allproject" target="1.7" />
+      <module name="dataserver" target="1.8" />
       <module name="entity" target="1.7" />
-      <module name="entitys" target="1.7" />
       <module name="eureka" target="1.8" />
       <module name="feign-customer" target="1.8" />
       <module name="rest-ribbon-customer" target="1.8" />
