@@ -1,17 +1,6 @@
 package com.nssliu.dataserver.entity;
 
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-import java.lang.String;
-
-public class Smdtv_1{
+public class Smdtv_1 {
 
 	static{
 		System.out.println("nssliu");
@@ -38,9 +27,6 @@ public class Smdtv_1{
 	private Integer smuserid;
 	private String mapid;
 	private String id;
-	private Double smy;
-	private Long smlibtileid;
-	private Double smx;
 
 	public Integer getSmid(){
 		return this.smid;
@@ -168,54 +154,6 @@ public class Smdtv_1{
 	public void setId(String id){
 		this.id=id;
 	}
-	public Double getSmy(){
-		return this.smy;
-	}
-	public void setSmy(Double smy){
-		this.smy=smy;
-	}
-	public Long getSmlibtileid(){
-		return this.smlibtileid;
-	}
-	public void setSmlibtileid(Long smlibtileid){
-		this.smlibtileid=smlibtileid;
-	}
-	public Double getSmx(){
-		return this.smx;
-	}
-	public void setSmx(Double smx){
-		this.smx=smx;
-	}
-
-	@Override
-	public String toString() {
-		return "Smdtv_1{" +
-				"smid=" + smid +
-				", markersymbolid=" + markersymbolid +
-				", condid='" + condid + '\'' +
-				", crid='" + crid + '\'' +
-				", passage='" + passage + '\'' +
-				", sgnl_loction='" + sgnl_loction + '\'' +
-				", linecolor=" + linecolor +
-				", condtype='" + condtype + '\'' +
-				", markerangle=" + markerangle +
-				", fillbackcolor=" + fillbackcolor +
-				", outlinkid='" + outlinkid + '\'' +
-				", slope='" + slope + '\'' +
-				", linewidth=" + linewidth +
-				", markersize=" + markersize +
-				", fillforecolor=" + fillforecolor +
-				", fillsymbolid=" + fillsymbolid +
-				", inlinkid='" + inlinkid + '\'' +
-				", linesymbolid=" + linesymbolid +
-				", smuserid=" + smuserid +
-				", mapid='" + mapid + '\'' +
-				", id='" + id + '\'' +
-				", smy=" + smy +
-				", smlibtileid=" + smlibtileid +
-				", smx=" + smx +
-				'}';
-	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -250,10 +188,7 @@ public class Smdtv_1{
 			return false;
 		if (smuserid != null ? !smuserid.equals(smdtv_1.smuserid) : smdtv_1.smuserid != null) return false;
 		if (mapid != null ? !mapid.equals(smdtv_1.mapid) : smdtv_1.mapid != null) return false;
-		if (id != null ? !id.equals(smdtv_1.id) : smdtv_1.id != null) return false;
-		if (smy != null ? !smy.equals(smdtv_1.smy) : smdtv_1.smy != null) return false;
-		if (smlibtileid != null ? !smlibtileid.equals(smdtv_1.smlibtileid) : smdtv_1.smlibtileid != null) return false;
-		return smx != null ? smx.equals(smdtv_1.smx) : smdtv_1.smx == null;
+		return id != null ? id.equals(smdtv_1.id) : smdtv_1.id == null;
 	}
 
 	@Override
@@ -279,9 +214,6 @@ public class Smdtv_1{
 		result = 31 * result + (smuserid != null ? smuserid.hashCode() : 0);
 		result = 31 * result + (mapid != null ? mapid.hashCode() : 0);
 		result = 31 * result + (id != null ? id.hashCode() : 0);
-		result = 31 * result + (smy != null ? smy.hashCode() : 0);
-		result = 31 * result + (smlibtileid != null ? smlibtileid.hashCode() : 0);
-		result = 31 * result + (smx != null ? smx.hashCode() : 0);
 		return result;
 	}
 }

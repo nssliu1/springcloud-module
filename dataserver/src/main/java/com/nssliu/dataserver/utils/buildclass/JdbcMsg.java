@@ -1,9 +1,13 @@
 package com.nssliu.dataserver.utils.buildclass;
 
 
+import com.nssliu.dataserver.entity.Table;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +55,19 @@ public class JdbcMsg {
         ProduceClassV2.produceClass(ormEntity);
 
 
+    }
+
+    //根据类名，包名，属性表导出类
+    public static void createClass(String tableName,String packageName,List<Table> tableList) throws SQLException, IOException, ClassNotFoundException {
+        ormEntity.setPackageName(packageName);
+        ormEntity.setClassName(tableName);
+        ormEntity.setClassType("public");
+        Iterator<Table> iterator = tableList.iterator();
+        while (iterator.hasNext()){
+            Table next = iterator.next();
+            ormEntity.getPropertyMap().put(next.getColumn_name(),next.getType_name());
+        }
+        ProduceClassV2.produceClass(ormEntity);
     }
 }
 
