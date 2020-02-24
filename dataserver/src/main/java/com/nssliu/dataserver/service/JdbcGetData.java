@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author liuzhiheng
@@ -23,8 +20,8 @@ import java.util.Map;
  */
 public class JdbcGetData {
     public static void main(String[] args) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        getTableData("smdtv_1");
-        //getTableData2("smdtv_1");
+        //getTableData("smdtv_1");
+        getTableData2("smdtv_1");
     }
 
     public static void getTableData(String tableName) throws SQLException {
@@ -38,8 +35,8 @@ public class JdbcGetData {
         while(rs.next()){
             System.out.println(
                     rs.getInt(1) + "\t"
-                            +rs.getString(2)+"\t"
-                            +rs.getString(3)+"\t"
+                            +rs.getDouble(2)+"\t"
+                            +rs.getFloat(3)+"\t"
                             +rs.getInt(4)+"\t"
                             +rs.getString(5)+"\t");
 
@@ -65,8 +62,8 @@ public class JdbcGetData {
 
 
         Class rsc = ResultSet.class;
-        Class cs[] = new Class[]{int.class};
-        Method getInt = rsc.getDeclaredMethod("getInt", cs);
+        Method getSmx = rsc.getDeclaredMethod("getDouble", int.class);
+        Method getSmy = rsc.getDeclaredMethod("getDouble", int.class);
 
 
 
@@ -78,8 +75,10 @@ public class JdbcGetData {
                             +rs.getString(3)+"\t"
                             +rs.getInt(4)+"\t"
                             +rs.getString(5)+"\t");*/
-            Integer invoke = (Integer) getInt.invoke(rs,1);
+            Object invoke = getSmx.invoke(rs,2);
+            Object invoke1 = getSmy.invoke(rs, 3);
             System.out.println(invoke);
+            System.out.println(invoke1);
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
@@ -92,7 +91,8 @@ public class JdbcGetData {
             conn.close();
         }
     }
-    public static void getTableData(String tableName, List<Table> tables) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
+    public static List getTableData(String tableName, List<Table> tables1,String fullClassName) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
+        List<Table> tables = processMethodName(tables1);
         MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //建立操作对象
@@ -103,26 +103,23 @@ public class JdbcGetData {
 
         Class rsc = ResultSet.class;
         Class cs[] = new Class[]{int.class};
-
-        Method getInt = rsc.getDeclaredMethod("getInt", cs);
-
-
-
+        List datas = new ArrayList();
+        Class<?> aClass1 = Class.forName(fullClassName);
         //依次输出结果集内容
         while(rs.next()){
-            /*System.out.println(
-                    rs.getInt(1) + "\t"
-                            +rs.getString(2)+"\t"
-                            +rs.getString(3)+"\t"
-                            +rs.getInt(4)+"\t"
-                            +rs.getString(5)+"\t");*/
-            Integer smid = (Integer) getInt.invoke(rs,1);
-            System.out.println(smid);
-            Class<?> aClass = Class.forName("");
-            Object o = aClass.newInstance();
-            Field declaredField = aClass.getDeclaredField("");
-            declaredField.setAccessible(true);
-            declaredField.set(o,1);
+            Iterator<Table> iterator = tables.iterator();
+            Object o1 = aClass1.newInstance();
+            while (iterator.hasNext()) {
+                Table table = iterator.next();
+                Method method = rsc.getDeclaredMethod(table.getType_name(), int.class);
+                Object invoke = method.invoke(rs, table.getIndex());//获取本字段返回值
+                Field declaredField = aClass1.getDeclaredField(table.getColumn_name());
+                declaredField.setAccessible(true);
+                declaredField.set(o1,invoke);
+
+            }
+            datas.add(o1);
+
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
@@ -134,16 +131,18 @@ public class JdbcGetData {
         if(conn!=null){
             conn.close();
         }
+        return datas;
     }
 
     public void test(List<Table> tables){
         System.out.println(processMethodName(tables));
     }
-    private List<Table> processMethodName(List<Table> tables){
+    private static List<Table> processMethodName(List<Table> tables){
         Map<String,String> columnTypeMapping = new HashMap<String,String>();
         columnTypeMapping.put("int4","getInt");
+        columnTypeMapping.put("int8","getLong");
         columnTypeMapping.put("serial","getInt");
-        columnTypeMapping.put("float8","getFloat");
+        columnTypeMapping.put("float8","getDouble");
         columnTypeMapping.put("varchar","getString");
         Iterator<Table> iterator = tables.iterator();
         while (iterator.hasNext()) {

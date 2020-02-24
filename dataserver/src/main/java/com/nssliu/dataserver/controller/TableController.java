@@ -1,10 +1,10 @@
 package com.nssliu.dataserver.controller;
-
 import com.nssliu.dataserver.entity.Table;
+import com.nssliu.dataserver.service.JdbcGetData;
 import com.nssliu.dataserver.service.JdbcGetTable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,18 +17,27 @@ import java.util.List;
  * @describe:
  */
 @RestController
-@RequestMapping("/tableController")
+@RequestMapping(value = "/tableController",produces = "application/json;charset=UTF-8")
 public class TableController {
     static ThreadLocal<List<Table>> localVar = new ThreadLocal<>();
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        String [] columns = new String[]{"fillbackcolor","fillforecolor"};
+    public static void main(String[] args) throws SQLException, ClassNotFoundException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        String [] columns = new String[]{};//{"fillbackcolor","fillforecolor"};
         List<String> removeColumns = Arrays.asList(columns);
         /*int i = removeColumns.indexOf("fillbackcolor");
         removeColumns.remove(0);
         System.out.println(removeColumns);*/
         List<Table> end = getEnd(removeColumns);
-        System.out.println(end);
+        List smdtv_1 = JdbcGetData.getTableData("smdtv_1", end ,"com.nssliu.dataserver.entity.Smdtv_1");
+        System.out.println(smdtv_1);
+    }
+    @GetMapping(value = "/getdbdata")
+    public Object getdbdata() throws Exception{
+        String [] columns = new String[]{};//{"fillbackcolor","fillforecolor"};
+        List<String> removeColumns = Arrays.asList(columns);
+        List<Table> end = getEnd(removeColumns);
+        List smdtv_1 = JdbcGetData.getTableData("smdtv_1", end ,"com.nssliu.dataserver.entity.Smdtv_1");
+        return smdtv_1;
     }
 
     public static List<Table> getEnd(List<String> removeColumns) throws SQLException, ClassNotFoundException {

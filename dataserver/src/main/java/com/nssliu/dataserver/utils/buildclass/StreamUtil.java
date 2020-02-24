@@ -1,4 +1,4 @@
-package com.nssliu.dataserver.utils;
+package com.nssliu.dataserver.utils.buildclass;
 
 import java.io.*;
 

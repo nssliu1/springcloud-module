@@ -1,0 +1,7 @@
+ClassHashMap是复写了HashMap put方法的存储介质
+ClassUtil是通过路径名获取包名等的工具类
+JdbcMsg是访问数据库的开端也是整个orm的开端
+OrmEntity是类的结构描述信息
+ProduceClassV2是具体的生成类的过程
+StreamUtil是io流工具类
+TypeMappingUtil是数据库表和字段的映射工具类
