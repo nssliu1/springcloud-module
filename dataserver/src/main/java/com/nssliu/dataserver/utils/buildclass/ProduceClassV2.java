@@ -1,5 +1,7 @@
 package com.nssliu.dataserver.utils.buildclass;
 
+import com.nssliu.dataserver.utils.cmd.Cmd;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -20,6 +22,12 @@ public class ProduceClassV2 {
     private static String filePath;// = "E:\\supermap\\work\\code\\gq\\java\\src\\main\\java\\com\\nss\\java1\\reflect_jdbc6\\orm\\ormv2\\";
     private static String packageName;// = ProduceClassV2.class.getPackage().getName();
 
+    //创建文件路径
+    public static void createFilePath(String filePath) throws IOException {
+        ProduceClassV2.filePath = filePath;
+        File file = new File(filePath);
+        file.mkdirs();
+    }
     //创建包路径
     public static void createPackagePath(String packageName) throws IOException {
         String rootPath = new File("").getCanonicalPath();//项目包根目录 java
@@ -28,7 +36,7 @@ public class ProduceClassV2 {
         for (String str: pNames){
             rootPath+=(File.separator+str);
         }
-        filePath = rootPath;
+        ProduceClassV2.filePath = rootPath;
         String packagePath = rootPath;
         File file = new File(packagePath);
         file.mkdirs();
@@ -118,10 +126,58 @@ public class ProduceClassV2 {
         //类结尾符
         stringBuilder.append("}");
         //保存文件位置
-        String filePath1 = filePath+ File.separator+className +".java";
+        String filePath1 = ProduceClassV2.filePath+ File.separator+className +".java";
         write = StreamUtil.getWrite(filePath1);
         write.write(stringBuilder.toString());
         StreamUtil.closeWriter(write);
+        //Class.forName(ProduceClassV2.packageName +"."+ className);
+
+    }
+    public static void produceClassForFilePath(OrmEntity ormEntity,String filPath) throws SQLException, ClassNotFoundException, IOException {
+
+
+        //创建生成类的路径
+        ProduceClassV2.packageName = ormEntity.getPackageName();
+        createFilePath(filPath);
+
+        //写包名
+        //producePackage(ProduceClassV2.packageName);
+
+        //导入依赖包
+        Map<String, String> propertys = ormEntity.getPropertyMap();
+        produceImportPackage(propertys);
+
+        //创建类
+        className = ormEntity.getClassName();
+        stringBuilder.append(ormEntity.getClassType()+" class "+className+"{\n");
+        stringBuilder.append("\n");
+
+        //创建静态代码块
+        produceStaticBlock();
+
+        //创建属性和getset方法
+        //Map<String, String> propertys = clazzMap.get("propertyName");
+        producePropertyGetSet(propertys);
+
+        //类结尾符
+        stringBuilder.append("}");
+        //保存文件位置
+        String filePath1 = ProduceClassV2.filePath+ File.separator+className +".java";
+        File file = new File(filePath1);
+        if(file.exists()){
+            file.getFreeSpace();
+        }
+        write = StreamUtil.getWrite(filePath1);
+        write.write(stringBuilder.toString());
+        stringBuilder.delete(0,stringBuilder.length());
+        StreamUtil.closeWriter(write);
+        //执行cmd指令编译java
+        Cmd.cmds("javac "+filePath1);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //Class.forName(ProduceClassV2.packageName +"."+ className);
 
     }

@@ -1,7 +1,7 @@
 package com.nssliu.dataserver.service;
 
 import com.nssliu.dataserver.entity.Table;
-import com.nssliu.dataserver.utils.MyDataSourcePool;
+import com.nssliu.dataserver.utils.datasourcepoll.MyDataSourcePool;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

@@ -1,7 +1,7 @@
 package com.nssliu.dataserver.service;
 
 import com.nssliu.dataserver.entity.Table;
-import com.nssliu.dataserver.utils.MyDataSourcePool;
+import com.nssliu.dataserver.utils.datasourcepoll.MyDataSourcePool;
 import com.nssliu.dataserver.utils.classloader.MyClassLoader1;
 
 import java.lang.reflect.Field;
@@ -134,7 +134,7 @@ public class JdbcGetData {
         }
         return datas;
     }
-    public static List getTableDataClassLoader(String tableName, List<Table> tables1,String fullClassName) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
+    public static List getTableDataClassLoader(String tableName, List<Table> tables1,String classFilePath) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
         List<Table> tables = processMethodName(tables1);
         MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
@@ -148,7 +148,7 @@ public class JdbcGetData {
         Class cs[] = new Class[]{int.class};
         List datas = new ArrayList();
         //Class<?> aClass1 = Class.forName(fullClassName);
-        MyClassLoader1 classloader = new MyClassLoader1("D:\\shenrujava\\file\\1class\\", "myClassloader");
+        MyClassLoader1 classloader = new MyClassLoader1(classFilePath, "myClassloader");
         Class aClass1 = classloader.loadClass(tableName.substring(0, 1).toUpperCase() + tableName.substring(1));
         //依次输出结果集内容
         while(rs.next()){

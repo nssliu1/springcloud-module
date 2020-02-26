@@ -69,5 +69,17 @@ public class JdbcMsg {
         }
         ProduceClassV2.produceClass(ormEntity);
     }
+    //根据类名，包名，属性表导出类
+    public static void createClassForFilePath(String tableName,String packageName,List<Table> tableList,String filePath) throws SQLException, IOException, ClassNotFoundException {
+        ormEntity.setPackageName(packageName);
+        ormEntity.setClassName(tableName);
+        ormEntity.setClassType("public");
+        Iterator<Table> iterator = tableList.iterator();
+        while (iterator.hasNext()){
+            Table next = iterator.next();
+            ormEntity.getPropertyMap().put(next.getColumn_name(),next.getType_name());
+        }
+        ProduceClassV2.produceClassForFilePath(ormEntity,filePath);
+    }
 }
 

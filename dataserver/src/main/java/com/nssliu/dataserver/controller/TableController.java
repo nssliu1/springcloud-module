@@ -1,10 +1,12 @@
 package com.nssliu.dataserver.controller;
 import com.nssliu.dataserver.entity.Msg;
+import com.nssliu.dataserver.entity.Rtcs;
 import com.nssliu.dataserver.entity.Table;
 import com.nssliu.dataserver.service.JdbcGetData;
 import com.nssliu.dataserver.service.JdbcGetTable;
 import com.nssliu.dataserver.service.ListTableExecve;
 import com.nssliu.dataserver.utils.buildclass.JdbcMsg;
+import com.nssliu.dataserver.utils.es.EsUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -50,9 +52,9 @@ public class TableController {
     }
     //删除某些字段
     //@RequestMapping("/removeTableColumn")
-    @RequestMapping(value = "/removeTableColumn",method = RequestMethod.POST)
-    public Object removeTableColumn(String[] rtcs) throws SQLException, ClassNotFoundException {
-        List<String> rc = Arrays.asList(rtcs);
+    @RequestMapping(value = "/removeTableColumn")
+    public Object removeTableColumn(@RequestBody List<String> rtcs) throws SQLException, ClassNotFoundException {
+        List<String> rc = rtcs;
         System.out.println(rc);
         newTables = ListTableExecve.getEnd(constTabls, rc);
         return new Msg(200,"成功");
@@ -66,16 +68,19 @@ public class TableController {
     @RequestMapping("/downTableEntity")
     public Object downTableEntity() throws SQLException, IOException, ClassNotFoundException {
         //通过配置或者用户给的地址将内容加载进自定义的类加载器中进行反射创建对象进行是被内容
-        JdbcMsg.createClass(tableName,packageName,newTables);
-        return new Msg(200,"success");
+        JdbcMsg.createClassForFilePath(tableName,packageName,newTables,"D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity");
+        return new Msg(200,"导出成功，请到配置目录查看默认D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity");
     }
     //获取删除字段后的数据
-    @GetMapping(value = "/getdbdata")
+    @RequestMapping(value = "/getdbdata")
+    //@CrossOrigin(origins = "http://127.0.0.1:8080")
     public Object getdbdata(@RequestParam String pullClassNme) throws Exception{
         System.out.println(pullClassNme);
 
-        List smdtv_1 = JdbcGetData.getTableData(tableName, newTables ,packageName);
-        return new Msg(200,smdtv_1);
+        //List smdtv_1 = JdbcGetData.getTableData(tableName, newTables ,packageName);
+        List tableDataClassLoader = JdbcGetData.getTableDataClassLoader(tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
+        EsUtil.addDoc(tableDataClassLoader,pullClassNme);
+        return new Msg(200,tableDataClassLoader);
     }
 
 

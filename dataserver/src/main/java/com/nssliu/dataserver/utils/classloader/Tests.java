@@ -10,8 +10,8 @@ import java.lang.reflect.Field;
  */
 public class Tests {
     public static void main(String[] args) throws ClassNotFoundException {
-        MyClassLoader1 classloader = new MyClassLoader1("D:\\shenrujava\\file\\1class\\", "myClassloader");
-        Class c = classloader.loadClass("Objects");
+        MyClassLoader1 classloader = new MyClassLoader1("D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\", "myClassloader");
+        Class c = classloader.loadClass("Smdtv_1");
         Field[] declaredFields = c.getDeclaredFields();
         System.out.println(declaredFields[0]);
     }
