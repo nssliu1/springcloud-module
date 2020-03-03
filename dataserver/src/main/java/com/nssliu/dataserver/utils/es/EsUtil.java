@@ -244,9 +244,9 @@ public class EsUtil {
 
     //插入数据根据实体
     //@Test
-    public static void addDoc(List list,String classFilePath) throws Exception {
+    public static void addDoc(List list,String tableName) throws Exception {
         MyClassLoader1 classloader = new MyClassLoader1("D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\", "myClassloader");
-        Class cls_smdtv = classloader.loadClass("Smdtv_1");
+        Class cls_smdtv = classloader.loadClass(tableName.substring(0, 1).toUpperCase() + tableName.substring(1));
         Field[] declaredFields = cls_smdtv.getDeclaredFields();
         EsHashMap<String,String> objectObjectEsHashMap = new EsHashMap<>();
         for (Field f: declaredFields) {
@@ -256,7 +256,7 @@ public class EsUtil {
             objectObjectEsHashMap.put(name,type.toString());
         }
         //创建表结构
-        EsUtil.indexName = classFilePath;
+        EsUtil.indexName = tableName;
         EsUtil.type = "66";
         createStudentIndex(objectObjectEsHashMap,indexName,type);
         for(int i =0;i<list.size();i++){

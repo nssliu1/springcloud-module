@@ -45,6 +45,7 @@ public class TableController {
     @RequestMapping("/getAllTableColumn")
     public Object getAllTableColumn(@RequestParam String tableName) throws SQLException, ClassNotFoundException {
         System.out.println(tableName);
+        TableController.tableName = tableName;
         constTabls = JdbcGetTable.getTableDetailList(tableName);
 
         return constTabls;
@@ -71,11 +72,12 @@ public class TableController {
         JdbcMsg.createClassForFilePath(tableName,packageName,newTables,"D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity");
         return new Msg(200,"导出成功，请到配置目录查看默认D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity");
     }
-    //获取删除字段后的数据
+    //获取删除字段后的数据并同步es
     @RequestMapping(value = "/getdbdata")
     //@CrossOrigin(origins = "http://127.0.0.1:8080")
     public Object getdbdata(@RequestParam String pullClassNme) throws Exception{
         System.out.println(pullClassNme);
+        tableName = pullClassNme;
 
         //List smdtv_1 = JdbcGetData.getTableData(tableName, newTables ,packageName);
         List tableDataClassLoader = JdbcGetData.getTableDataClassLoader(tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
