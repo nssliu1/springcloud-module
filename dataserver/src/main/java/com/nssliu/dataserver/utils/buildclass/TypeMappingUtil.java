@@ -20,11 +20,13 @@ public class TypeMappingUtil {
        // PROPERTY_TYPE_MAPPING_COLUMN.put("float8","Float");
         PROPERTY_TYPE_MAPPING_COLUMN.put("float8","Double");
         PROPERTY_TYPE_MAPPING_COLUMN.put("serial","Integer");
+        PROPERTY_TYPE_MAPPING_COLUMN.put("timestamptz","Date");
 
         PROPERTY_TYPE_PACKAGE = new HashMap<>();
         PROPERTY_TYPE_PACKAGE.put("Date","java.util.Date");
         PROPERTY_TYPE_PACKAGE.put("String","java.lang.String");
         PROPERTY_TYPE_PACKAGE.put("float8","Float");
+        PROPERTY_TYPE_PACKAGE.put("timestamptz","java.util.Date");
     }
     public static String getTypeOfTableType(String columnType){
         return PROPERTY_TYPE_MAPPING_COLUMN.get(columnType);

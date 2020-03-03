@@ -161,6 +161,7 @@ public class JdbcGetData {
                 Field declaredField = aClass1.getDeclaredField(table.getColumn_name());
                 declaredField.setAccessible(true);
                 declaredField.set(o1,invoke);
+                //rs.getTimestamp()
 
             }
             datas.add(o1);
@@ -190,6 +191,7 @@ public class JdbcGetData {
         columnTypeMapping.put("serial","getInt");
         columnTypeMapping.put("float8","getDouble");
         columnTypeMapping.put("varchar","getString");
+        columnTypeMapping.put("timestamptz","getDate");
         Iterator<Table> iterator = tables.iterator();
         while (iterator.hasNext()) {
             Table table = iterator.next();
