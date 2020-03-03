@@ -2,7 +2,8 @@
 1采用依赖类模块化形式
 2可使用此作为模板
 3服务入口点在com.nssliu.dataserver.controller.TableController
-4过程是
+4项目目的将数据库表的某些属性值同步es
+5过程是
 1）访问表所有属性
 2）删除某些属性
 3）导出保留属性的java文件并编译为.class
