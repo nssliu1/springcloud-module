@@ -1,4 +1,9 @@
 该springcloud是利用module形式创建父子级别
 1采用依赖类模块化形式
 2可使用此作为模板
-3测试sour
+3服务入口点在com.nssliu.dataserver.controller.TableController
+4过程是
+1）访问表所有属性
+2）删除某些属性
+3）导出保留属性的java文件并编译为.class
+4）根据保留的属性将数据库的这些属性值插入到es
