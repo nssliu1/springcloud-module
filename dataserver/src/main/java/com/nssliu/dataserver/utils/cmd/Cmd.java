@@ -6,7 +6,7 @@ import java.io.IOException;
  * @author liuzhiheng
  * @version 1.0
  * @date 2020/2/25 17:56
- * @describe:
+ * @describe:自动执行生成的java文件的编译将.class文件放在同级的目录下
  */
 public class Cmd {
     public static void main(String[] args) throws IOException {
