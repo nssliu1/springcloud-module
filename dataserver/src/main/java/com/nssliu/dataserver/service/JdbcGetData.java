@@ -20,9 +20,12 @@ import java.util.*;
  * @describe:
  */
 public class JdbcGetData {
+    static MyDataSourcePool msp = new MyDataSourcePool();
     public static void main(String[] args) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         //getTableData("smdtv_1");
-        getTableData2("smdtv_1");
+        //getTableData2("smdtv_1");
+        Long smdtv_3 = getAllNum("smdtv_3");
+        System.out.println(smdtv_3);
     }
 
     public static void getTableData(String tableName) throws SQLException {
@@ -44,17 +47,43 @@ public class JdbcGetData {
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
-            rs.close();
+            //rs.close();
         }
         if(stmt!=null){
-            stmt.close();
+            //stmt.close();
         }
         if(conn!=null){
-            conn.close();
+            msp.returnConn(conn);
         }
     }
+    public static Long getAllNum(String tableName) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Connection conn = msp.getConnection();
+        //建立操作对象
+        Statement stmt= conn.createStatement();
+        //结果集
+        ResultSet rs = stmt.executeQuery("SELECT count(*) from "+tableName);
+
+        Class rsc = ResultSet.class;
+        Method countMet = rsc.getDeclaredMethod("getLong", int.class);
+        Long allNum = 0L;
+        //依次输出结果集内容
+        while(rs.next()){
+            Object invoke = countMet.invoke(rs,1);
+            allNum = Long.valueOf(String.valueOf(invoke));
+        }
+        //依次关闭结果集，操作对象，数据库对象
+        if(rs!=null){
+            //rs.close();
+        }
+        if(stmt!=null){
+            //stmt.close();
+        }
+        if(conn!=null){
+            msp.returnConn(conn);
+        }
+        return allNum;
+    }
     public static void getTableData2(String tableName) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //建立操作对象
         Statement stmt= conn.createStatement();
@@ -83,18 +112,17 @@ public class JdbcGetData {
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
-            rs.close();
+            //rs.close();
         }
         if(stmt!=null){
-            stmt.close();
+            //stmt.close();
         }
         if(conn!=null){
-            conn.close();
+            msp.returnConn(conn);
         }
     }
     public static List getTableData(String tableName, List<Table> tables1,String fullClassName) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
         List<Table> tables = processMethodName(tables1);
-        MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //建立操作对象
         Statement stmt= conn.createStatement();
@@ -124,19 +152,18 @@ public class JdbcGetData {
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
-            rs.close();
+            //rs.close();
         }
         if(stmt!=null){
-            stmt.close();
+            //stmt.close();
         }
         if(conn!=null){
-            conn.close();
+            msp.returnConn(conn);
         }
         return datas;
     }
     public static List getTableDataClassLoader(String tableName, List<Table> tables1,String classFilePath) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
         List<Table> tables = processMethodName(tables1);
-        MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //建立操作对象
         Statement stmt= conn.createStatement();
@@ -169,25 +196,24 @@ public class JdbcGetData {
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
-            rs.close();
+            //rs.close();
         }
         if(stmt!=null){
-            stmt.close();
+            //stmt.close();
         }
         if(conn!=null){
-            conn.close();
+            msp.returnConn(conn);
         }
         return datas;
     }
     public static List getTableDataClassLoader(Integer pageNum,Integer currPage,String tableName, List<Table> tables1,String classFilePath) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
         List<Table> tables = processMethodName(tables1);
-        MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //建立操作对象
         Statement stmt= conn.createStatement();
         //结果集
         //ResultSet rs = stmt.executeQuery("select * from "+tableName);
-        ResultSet rs = stmt.executeQuery("select * from "+tableName+" LIMIT "+pageNum+" OFFSET "+currPage);
+        ResultSet rs = stmt.executeQuery("select * from "+tableName+" LIMIT "+pageNum+" OFFSET "+currPage*pageNum);
 
 
 
@@ -216,13 +242,13 @@ public class JdbcGetData {
         }
         //依次关闭结果集，操作对象，数据库对象
         if(rs!=null){
-            rs.close();
+            //rs.close();
         }
         if(stmt!=null){
-            stmt.close();
+            //stmt.close();
         }
         if(conn!=null){
-            conn.close();
+            msp.returnConn(conn);
         }
         return datas;
     }

@@ -231,7 +231,7 @@ public class EsUtil {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
 
-            builder = startObjectStr.invoke(builder,new Object[]{key});
+            builder = startObjectStr.invoke(builder,new Object[]{key.toUpperCase()});
             builder = field.invoke(builder,new Object[]{"type",value});
 
 
@@ -268,9 +268,12 @@ public class EsUtil {
 
         //分页查找数据库记录
         //SELECT count(*) from smdtv_3;
-        Integer allPage = 2;
+
+        Long allPage = 2L;
         Integer pageNum = 20;
-        for(int currPage = 0;currPage<allPage;currPage++){
+        Long allNum = JdbcGetData.getAllNum(tableName);
+        allPage = allNum/20;
+        for(int currPage = 0;currPage<=allPage;currPage++){
             //select * from smdtv_3 LIMIT 10 OFFSET 0;
             List list = JdbcGetData.getTableDataClassLoader(pageNum,currPage,tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
 
@@ -298,9 +301,9 @@ public class EsUtil {
                         Object o1 = declaredField.get(o);
                         System.out.print(" "+o1);
                         if(o1!=null){
-                            builder = field.invoke(builder, new Object[]{name, o1.toString()});
+                            builder = field.invoke(builder, new Object[]{name.toUpperCase(), o1.toString()});
                         }else {
-                            builder = field.invoke(builder, new Object[]{name, null});
+                            builder = field.invoke(builder, new Object[]{name.toUpperCase(), null});
 
                         }
                     }
@@ -375,6 +378,11 @@ public class EsUtil {
     public static void addEss(Object builder){
         XContentBuilder doc = (XContentBuilder) builder;
         //添加一个doc
+        try {
+            System.out.println(doc.string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         IndexResponse response = client.prepareIndex(indexName,type,null)//id为null，由ES自己生成
                 .setSource(doc).get();
         System.out.println(response.status());//打印添加是否成功
@@ -417,7 +425,7 @@ public class EsUtil {
             //获取smy
             Field smy = cls_smdtv.getDeclaredField("smy");//lon
             smy.setAccessible(true);
-            Object smy_data = smx.get(cls_smdtv_data);
+            Object smy_data = smy.get(cls_smdtv_data);
             //组装geo_point
             builder = fieldLatLon.invoke(builder, new Object[]{"location", (Double)smx_data, (Double)smy_data});
         }catch (NoSuchFieldException e) {

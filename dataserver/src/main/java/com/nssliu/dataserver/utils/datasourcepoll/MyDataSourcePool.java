@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 /**
@@ -21,6 +23,8 @@ import java.util.logging.Logger;
  * @describe:用于提供数据源连接和归还连接  代理对象方式
  */
 public class MyDataSourcePool extends MyDataSourcePoolModel {
+    private final static String LOCK = "lock";
+    private BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(10);
     private final List<Connection> POOL;
     {
         Connection conn;
@@ -33,6 +37,7 @@ public class MyDataSourcePool extends MyDataSourcePoolModel {
                 //使用代理连接来代表连接
                 Connection connProxy = (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class[]{Connection.class}, new ConnInvo(conn));
                 POOL.add(connProxy);
+                queue.put(1);
             }
             System.out.println("连接池初始化完成");
         }catch (Exception e){
@@ -40,8 +45,22 @@ public class MyDataSourcePool extends MyDataSourcePoolModel {
         }
 
     }
+
+    public void returnConn(Connection conn){
+        POOL.add(conn);
+        try {
+            queue.put(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public Connection getConnection() throws SQLException {
+        try {
+            queue.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return POOL.remove(0);
     }
     class ConnInvo implements InvocationHandler {
