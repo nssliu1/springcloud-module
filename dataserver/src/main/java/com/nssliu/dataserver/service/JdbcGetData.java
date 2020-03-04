@@ -179,6 +179,53 @@ public class JdbcGetData {
         }
         return datas;
     }
+    public static List getTableDataClassLoader(Integer pageNum,Integer currPage,String tableName, List<Table> tables1,String classFilePath) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
+        List<Table> tables = processMethodName(tables1);
+        MyDataSourcePool msp = new MyDataSourcePool();
+        Connection conn = msp.getConnection();
+        //建立操作对象
+        Statement stmt= conn.createStatement();
+        //结果集
+        //ResultSet rs = stmt.executeQuery("select * from "+tableName);
+        ResultSet rs = stmt.executeQuery("select * from "+tableName+" LIMIT "+pageNum+" OFFSET "+currPage);
+
+
+
+        Class rsc = ResultSet.class;
+        Class cs[] = new Class[]{int.class};
+        List datas = new ArrayList();
+        //Class<?> aClass1 = Class.forName(fullClassName);
+        MyClassLoader1 classloader = new MyClassLoader1(classFilePath, "myClassloader");
+        Class aClass1 = classloader.loadClass(tableName.substring(0, 1).toUpperCase() + tableName.substring(1));
+        //依次输出结果集内容
+        while(rs.next()){
+            Iterator<Table> iterator = tables.iterator();
+            Object o1 = aClass1.newInstance();
+            while (iterator.hasNext()) {
+                Table table = iterator.next();
+                Method method = rsc.getDeclaredMethod(table.getType_name(), int.class);
+                Object invoke = method.invoke(rs, table.getIndex());//获取本字段返回值
+                Field declaredField = aClass1.getDeclaredField(table.getColumn_name());
+                declaredField.setAccessible(true);
+                declaredField.set(o1,invoke);
+                //rs.getTimestamp()
+
+            }
+            datas.add(o1);
+
+        }
+        //依次关闭结果集，操作对象，数据库对象
+        if(rs!=null){
+            rs.close();
+        }
+        if(stmt!=null){
+            stmt.close();
+        }
+        if(conn!=null){
+            conn.close();
+        }
+        return datas;
+    }
 
     public void test(List<Table> tables){
         System.out.println(processMethodName(tables));

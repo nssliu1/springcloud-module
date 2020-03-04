@@ -80,9 +80,10 @@ public class TableController {
         tableName = pullClassNme;
 
         //List smdtv_1 = JdbcGetData.getTableData(tableName, newTables ,packageName);
-        List tableDataClassLoader = JdbcGetData.getTableDataClassLoader(tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
-        EsUtil.addDoc(tableDataClassLoader,pullClassNme);
-        return new Msg(200,tableDataClassLoader);
+        //List tableDataClassLoader = JdbcGetData.getTableDataClassLoader(tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
+        //EsUtil.addDoc(tableDataClassLoader,pullClassNme);
+        EsUtil.addDoc(tableName,newTables,pullClassNme);
+        return new Msg(200,"导出成功");
     }
 
 
