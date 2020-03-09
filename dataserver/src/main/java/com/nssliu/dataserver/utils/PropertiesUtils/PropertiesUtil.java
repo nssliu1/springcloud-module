@@ -19,7 +19,7 @@ public class PropertiesUtil {
         try{
             Properties properties = new Properties();
             // 使用ClassLoader加载properties配置文件生成对应的输入流
-            InputStream in = PropertiesUtil.class.getClassLoader().getResourceAsStream("/application.properties");
+            InputStream in = PropertiesUtil.class.getClassLoader().getResourceAsStream("/application.properties_bak");
             // 使用properties对象加载输入流
             properties.load(in);
             //获取key对应的value值

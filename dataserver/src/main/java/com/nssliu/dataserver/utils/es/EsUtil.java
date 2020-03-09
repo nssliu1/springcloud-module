@@ -293,8 +293,10 @@ public class EsUtil {
 
         Class<XContentBuilder> xContentBuilderClass = XContentBuilder.class;
         Method startObject = xContentBuilderClass.getDeclaredMethod("startObject",null);
+        Method startObjectStr = xContentBuilderClass.getDeclaredMethod("startObject",String.class);
         Method endObject = xContentBuilderClass.getDeclaredMethod("endObject",null);
         Method field = xContentBuilderClass.getDeclaredMethod("field",String.class,String.class);
+        Method doubleField = xContentBuilderClass.getDeclaredMethod("field", String.class, double.class);
         Method latlonField = xContentBuilderClass.getDeclaredMethod("latlon", String.class, double.class, double.class);
 
 
@@ -309,8 +311,11 @@ public class EsUtil {
                     Object builder = XContentFactory.jsonBuilder();
 
                     builder = startObject.invoke(builder, null);
+                    builder = startObjectStr.invoke(builder, new Object[]{"location"});
                     //追加geo_point信息
-                    builder = addGeoPointData(latlonField, builder, cls_smdtv, o);
+                    //builder = addGeoPointData(latlonField, builder, cls_smdtv, o);
+                    builder = addGeoPointDataVTwo(doubleField, builder, cls_smdtv, o);
+                    builder = endObject.invoke(builder, null);
 
                     for (Field field1: declaredFields){
                         //field1.setAccessible(true);
@@ -426,9 +431,36 @@ public class EsUtil {
 
 
         try {
-            builder = startObjectStr.invoke(builder,new Object[]{"location1"});
+            builder = startObjectStr.invoke(builder,new Object[]{"location"});
             builder = field.invoke(builder,new Object[]{"type","geo_point"});
-            builder = endObject.invoke(builder, null);
+            //builder = field.invoke(builder,new Object[]{"geohash_prefix",true});
+            //builder = field.invoke(builder,new Object[]{"geohash_precision","1km"});
+            builder = endObject.invoke(builder);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return builder;
+    }
+
+    private static Object addGeoPointDataVTwo(Method doubleField,Object builder,Class cls_smdtv,Object cls_smdtv_data){
+        cls_smdtv = cls_smdtv_data.getClass();
+        try {
+            //获取smx
+            Field smx = cls_smdtv.getDeclaredField("smx");//lat
+            smx.setAccessible(true);
+            Object smx_data = smx.get(cls_smdtv_data);
+            //获取smy
+            Field smy = cls_smdtv.getDeclaredField("smy");//lon
+            smy.setAccessible(true);
+            Object smy_data = smy.get(cls_smdtv_data);
+            //组装geo_point
+            //builder = field.invoke(builder, new Object[]{"location", (Double)smy_data, (Double)smx_data});
+            builder = doubleField.invoke(builder, new Object[]{"lat", smy_data});
+            builder = doubleField.invoke(builder, new Object[]{"lon", smx_data});
+        }catch (NoSuchFieldException e) {
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -449,7 +481,7 @@ public class EsUtil {
             smy.setAccessible(true);
             Object smy_data = smy.get(cls_smdtv_data);
             //组装geo_point
-            builder = fieldLatLon.invoke(builder, new Object[]{"location", (Double)smx_data, (Double)smy_data});
+            builder = fieldLatLon.invoke(builder, new Object[]{"location", (Double)smy_data, (Double)smx_data});
         }catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -459,4 +491,5 @@ public class EsUtil {
         }
         return builder;
     }
+
 }
