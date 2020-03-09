@@ -16,7 +16,7 @@ import java.lang.String;
 import java.lang.String;
 import java.lang.String;
 
-public class Smdtv_4{
+public class Smdtv_5{
 
 	static{
 		System.out.println("nssliu");
@@ -47,7 +47,6 @@ public class Smdtv_4{
 	private String regorg_1;
 	private Integer lc;
 	private String datauptime;
-	private Integer field_smuserid;
 	private String location;
 	private String industryphy;
 	private Long smlibtileid;
@@ -202,12 +201,6 @@ public class Smdtv_4{
 	}
 	public void setDatauptime(String datauptime){
 		this.datauptime=datauptime;
-	}
-	public Integer getField_smuserid(){
-		return this.field_smuserid;
-	}
-	public void setField_smuserid(Integer field_smuserid){
-		this.field_smuserid=field_smuserid;
 	}
 	public String getLocation(){
 		return this.location;

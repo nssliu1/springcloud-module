@@ -1,5 +1,7 @@
-package com.nssliu.dataserver.utils.datasourcepoll;
+package com.nssliu.dataserver.utils.datasourcepool;
 
+
+import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -24,16 +26,28 @@ import java.util.logging.Logger;
  */
 public class MyDataSourcePool extends MyDataSourcePoolModel {
     private final static String LOCK = "lock";
-    private BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(10);
+    private static final Integer deep;
+    private BlockingQueue<Integer> queue;
     private final List<Connection> POOL;
+    static {
+        deep = Integer.valueOf(PropertiesUtil.getProperties_1("dataSourcePoolDeep"));
+
+    }
     {
+        //初始化阻塞队列
+        queue = new ArrayBlockingQueue<>(deep);
+        String postgresUrl = PropertiesUtil.getProperties_1("postgresUrl");
+        String pgsqlUser = PropertiesUtil.getProperties_1("pgsqlUser");
+        String pgsqlPwd = PropertiesUtil.getProperties_1("pgsqlPwd");
+        String sqlDriverName = PropertiesUtil.getProperties_1("sqlDriverName");
+
         Connection conn;
         POOL = new LinkedList<>();
         try{
-            for(int i = 0;i<10;i++){
-                Class.forName("org.postgresql.Driver");
-                conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/esdb",
-                        "postgres", "123456");
+            for(int i = 0;i<deep;i++){
+                Class.forName(sqlDriverName);
+                conn = DriverManager.getConnection(postgresUrl,
+                        pgsqlUser, pgsqlPwd);
                 //使用代理连接来代表连接
                 Connection connProxy = (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class[]{Connection.class}, new ConnInvo(conn));
                 POOL.add(connProxy);

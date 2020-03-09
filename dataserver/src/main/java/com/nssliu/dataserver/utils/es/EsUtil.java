@@ -3,6 +3,7 @@ package com.nssliu.dataserver.utils.es;
 import com.nssliu.dataserver.entity.Person;
 import com.nssliu.dataserver.entity.Table;
 import com.nssliu.dataserver.service.JdbcGetData;
+import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.classloader.MyClassLoader1;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
@@ -23,6 +24,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,16 +44,25 @@ public class EsUtil {
     private static TransportClient client;
     private static String indexName = "test4";
     private static String type = "nssliuType";
+    private static String createEsIndexName;
+    private static String createEsType;
+    private static Integer queryDBColumn = 50;
     static {
+        createEsIndexName = PropertiesUtil.getProperties_1("createEsIndexName");
+        createEsType = PropertiesUtil.getProperties_1("createEsType");
+        queryDBColumn = Integer.valueOf(PropertiesUtil.getProperties_1("queryDBColumn"));
+        String esClusterName = PropertiesUtil.getProperties_1("esClusterName");
+        String esIp = PropertiesUtil.getProperties_1("esIp");
+        Integer esPort = Integer.valueOf(PropertiesUtil.getProperties_1("esPort"));
         //指定ES集群
         setting = Settings.builder().put("cluster.name",
-                "my-application").build();
+                esClusterName).build();
         //创建访问ES服务器的客户端
         try {
             client = new PreBuiltTransportClient(setting)
                    .addTransportAddress(
                            new TransportAddress(
-                                   InetAddress.getByName("127.0.0.1"),9300));
+                                   InetAddress.getByName(esIp),esPort));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -258,21 +269,35 @@ public class EsUtil {
         for (Field f: declaredFields) {
             String name = f.getName();
             Class<?> type = f.getType();
-            System.out.println(type.toString());
+            //System.out.println(type.toString());
             objectObjectEsHashMap.put(name,type.toString());
         }
-        //创建表结构
         EsUtil.indexName = tableName;
         EsUtil.type = "66";
-        createStudentIndex(objectObjectEsHashMap,indexName,type);
+        //创建表结构
+        if(createEsIndexName != null){
+            EsUtil.indexName = createEsIndexName;
+        }
+        if(createEsType != null){
+            EsUtil.type = createEsType;
+        }
+        createStudentIndex(objectObjectEsHashMap,EsUtil.indexName,EsUtil.type);
 
         //分页查找数据库记录
         //SELECT count(*) from smdtv_3;
 
         Long allPage = 2L;
-        Integer pageNum = 20;
+        Integer pageNum = queryDBColumn;
         Long allNum = JdbcGetData.getAllNum(tableName);
-        allPage = allNum/20;
+        allPage = allNum/pageNum;
+
+        Class<XContentBuilder> xContentBuilderClass = XContentBuilder.class;
+        Method startObject = xContentBuilderClass.getDeclaredMethod("startObject",null);
+        Method endObject = xContentBuilderClass.getDeclaredMethod("endObject",null);
+        Method field = xContentBuilderClass.getDeclaredMethod("field",String.class,String.class);
+        Method latlonField = xContentBuilderClass.getDeclaredMethod("latlon", String.class, double.class, double.class);
+
+
         for(int currPage = 0;currPage<=allPage;currPage++){
             //select * from smdtv_3 LIMIT 10 OFFSET 0;
             List list = JdbcGetData.getTableDataClassLoader(pageNum,currPage,tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
@@ -281,13 +306,8 @@ public class EsUtil {
                 Object o = list.get(i);
                 Class<?> aClass = o.getClass();
                 try{
-                    Class<XContentBuilder> xContentBuilderClass = XContentBuilder.class;
                     Object builder = XContentFactory.jsonBuilder();
 
-                    Method startObject = xContentBuilderClass.getDeclaredMethod("startObject",null);
-                    Method endObject = xContentBuilderClass.getDeclaredMethod("endObject",null);
-                    Method field = xContentBuilderClass.getDeclaredMethod("field",String.class,String.class);
-                    Method latlonField = xContentBuilderClass.getDeclaredMethod("latlon", String.class, double.class, double.class);
                     builder = startObject.invoke(builder, null);
                     //追加geo_point信息
                     builder = addGeoPointData(latlonField, builder, cls_smdtv, o);
@@ -299,7 +319,7 @@ public class EsUtil {
                         declaredField.setAccessible(true);
 
                         Object o1 = declaredField.get(o);
-                        System.out.print(" "+o1);
+                        //System.out.print(" "+o1);
                         if(o1!=null){
                             builder = field.invoke(builder, new Object[]{name.toUpperCase(), o1.toString()});
                         }else {
@@ -312,7 +332,9 @@ public class EsUtil {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                //o = null;
             }
+            //list = null;
         }
 
 
@@ -329,7 +351,7 @@ public class EsUtil {
         for (Field f: declaredFields) {
             String name = f.getName();
             Class<?> type = f.getType();
-            System.out.println(type.toString());
+            //System.out.println(type.toString());
             objectObjectEsHashMap.put(name,type.toString());
         }
         //创建表结构
@@ -358,7 +380,7 @@ public class EsUtil {
                     declaredField.setAccessible(true);
 
                     Object o1 = declaredField.get(o);
-                    System.out.print(" "+o1);
+                    //System.out.print(" "+o1);
                     if(o1!=null){
                         builder = field.invoke(builder, new Object[]{name, o1.toString()});
                     }else {
@@ -378,14 +400,14 @@ public class EsUtil {
     public static void addEss(Object builder){
         XContentBuilder doc = (XContentBuilder) builder;
         //添加一个doc
-        try {
-            System.out.println(doc.string());
+        /*try {
+            //System.out.println(doc.string());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         IndexResponse response = client.prepareIndex(indexName,type,null)//id为null，由ES自己生成
                 .setSource(doc).get();
-        System.out.println(response.status());//打印添加是否成功
+        //System.out.println(response.status());//打印添加是否成功
     }
     @Test
     public void testsss(){

@@ -11,6 +11,7 @@
       <module>entity</module>
       <module>eureka</module>
       <module>server</module>
+      <module>dataserver</module>
       <module>feign-customer</module>
       <module>rest-ribbon-customer</module>
     </modules>

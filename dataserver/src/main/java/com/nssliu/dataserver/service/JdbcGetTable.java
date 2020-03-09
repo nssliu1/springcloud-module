@@ -1,7 +1,8 @@
 package com.nssliu.dataserver.service;
 
 import com.nssliu.dataserver.entity.Table;
-import com.nssliu.dataserver.utils.datasourcepoll.MyDataSourcePool;
+import com.nssliu.dataserver.utils.datasourcepool.MyDataSourcePool;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,6 +20,9 @@ import java.util.Map;
  * @describe:
  */
 public class JdbcGetTable {
+    @Value("${clusterName}")
+    public static String clusterName;
+
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
         Map<String, String> smdtv_1 = getTableDetail("smdtv_1");
@@ -64,6 +68,7 @@ public class JdbcGetTable {
     }
 
     public static List<Table> getTableDetailList(String m_TableName) throws SQLException, ClassNotFoundException {
+
         MyDataSourcePool msp = new MyDataSourcePool();
         Connection conn = msp.getConnection();
         //String m_TableName = "smdtv_1";

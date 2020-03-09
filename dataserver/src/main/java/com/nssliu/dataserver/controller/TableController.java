@@ -83,6 +83,7 @@ public class TableController {
         //List tableDataClassLoader = JdbcGetData.getTableDataClassLoader(tableName, newTables, "D:\\0liuzh\\0study\\0githubs\\allproject\\0createEntity\\");
         //EsUtil.addDoc(tableDataClassLoader,pullClassNme);
         EsUtil.addDoc(tableName,newTables,pullClassNme);
+        System.out.println("同步完毕");
         return new Msg(200,"导出成功");
     }
 
