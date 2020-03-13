@@ -1,6 +1,9 @@
 package com.nssliu.dataserver.utils.PropertiesUtils;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
@@ -16,20 +19,18 @@ import java.util.Properties;
 public class PropertiesUtil {
     public static String getVal(String key){
         String val=null;
-        try{
-            Properties properties = new Properties();
-            // 使用ClassLoader加载properties配置文件生成对应的输入流
-            InputStream in = PropertiesUtil.class.getClassLoader().getResourceAsStream("/application.properties_bak");
-            // 使用properties对象加载输入流
-            properties.load(in);
-            //获取key对应的value值
-            val = properties.getProperty(key);
-            System.out.println(key);
-
-        }catch (Exception e){
+        Properties properties = new Properties();
+        InputStream is = Test.class.getResourceAsStream("/application.properties");
+        Resource[] resources = new Resource[]{new InputStreamResource(is)};
+        try {
+            for (Resource resource : resources) {
+                PropertiesLoaderUtils.fillProperties(properties, new EncodedResource(resource, "UTF-8"));
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return val;
+
+        return (String) properties.get(key);
     }
 
     @Test

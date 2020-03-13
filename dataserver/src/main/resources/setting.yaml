@@ -1,0 +1,48 @@
+cc:
+
+  httpUri: http://changchun.fangjia.com/trend/year2Data
+  #http://cc.cityhouse.cn/market/chartsdatanew.html?city=sq&proptype=11&district=allsq1&town=&sinceyear=5&flag=1&based=price&dtype=line
+  httpUriOld: http://cc.cityhouse.cn/market/chartsdatanew.html?city=cc&proptype=11&district=%E6%A6%86%E6%A0%91%E5%B8%82&town=&sinceyear=5&flag=1&based=price&dtype=line
+  parent:
+    - name: 长春
+      names: 长春市
+      code: "0000"
+      type: 5
+      childs:
+        #name是二手房查询参数，names是新房查询参数
+        - name: 二道
+          names: 二道区
+          code: "0001"
+        - name: 朝阳
+          names: 朝阳区
+          code: "0002"
+        - name: 南关
+          names: 南关区
+          code: "0003"
+        - name: 宽城
+          names: 宽城区
+          code: "0004"
+        - name: 绿园
+          names: 绿园区
+          code: "0005"
+        - name: 双阳
+          names: 双阳区
+          code: "0006"
+        - name: 九台
+          names: 九台区
+          code: "0007"
+        - name: 德惠
+          names: 德惠市
+          code: "0008"
+        - name: 榆树
+          names: 榆树市
+          code: "0009"
+        - name: 农安
+          names: 农安县
+          code: "0010"
+    - name: 北京
+      childs:
+        - 海淀
+        - 北区
+ccold:
+  type: old

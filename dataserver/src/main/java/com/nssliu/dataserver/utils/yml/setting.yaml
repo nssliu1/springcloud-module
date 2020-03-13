@@ -1,0 +1,17 @@
+tunnels:
+  mc:
+    remote_port: 44444
+    proto: {tcp: 33333, tcp2: 666}
+    liuzh:
+      - tel1: 10
+      - tel1: 11
+    cc:
+      parent:
+        - name: 长春
+          childs:
+            - 二道口
+            - 朝阳区
+        - name: 北京
+          childs:
+            - 海淀
+            - 北区
