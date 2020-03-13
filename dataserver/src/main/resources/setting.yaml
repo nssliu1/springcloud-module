@@ -1,11 +1,29 @@
+#创建java映射es表
+javaToEs:
+  javaName: Fj
+  #创建映射
+  create:
+    index: hpnew
+    type: cc
+  #数据传送接口
+  #新房索引信息
+  syncEsNew:
+    index: hpnew
+    type: cc
+  #旧房索引信息
+  syncEsOld:
+    index: hpold
+    type: cc
+
 cc:
 
   httpUri: http://changchun.fangjia.com/trend/year2Data
   #http://cc.cityhouse.cn/market/chartsdatanew.html?city=sq&proptype=11&district=allsq1&town=&sinceyear=5&flag=1&based=price&dtype=line
-  httpUriOld: http://cc.cityhouse.cn/market/chartsdatanew.html?city=cc&proptype=11&district=%E6%A6%86%E6%A0%91%E5%B8%82&town=&sinceyear=5&flag=1&based=price&dtype=line
+  httpUriOld: http://cc.cityhouse.cn/market/chartsdatanew.html
   parent:
     - name: 长春
       names: 长春市
+      shortName: cc
       code: "0000"
       type: 5
       childs:
@@ -40,9 +58,4 @@ cc:
         - name: 农安
           names: 农安县
           code: "0010"
-    - name: 北京
-      childs:
-        - 海淀
-        - 北区
-ccold:
-  type: old
+

@@ -7,7 +7,7 @@ var APPCONFIG = APPCONFIG || {};
 
     var location = window.location,host = location.port == '3000' ? 'http://127.0.0.1:8080' : location.protocol + '//' + location.hostname + ":" + location.port;
     APPCONFIG = {
-      tableName:"smdtv_1",
+      tableName:"smdtv_6",
       url:"http://127.0.0.1:8186/apps/start",
       oneUrl:"http://127.0.0.1:8186/appOne/start",
       apps:[

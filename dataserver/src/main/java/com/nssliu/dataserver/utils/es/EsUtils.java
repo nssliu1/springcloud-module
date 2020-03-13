@@ -1,32 +1,23 @@
 package com.nssliu.dataserver.utils.es;
 
-import com.nssliu.dataserver.entity.Person;
-import com.nssliu.dataserver.entity.Table;
-import com.nssliu.dataserver.service.JdbcGetData;
 import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.classloader.MyClassLoader1;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +26,6 @@ import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class EsUtils {
     private static Settings setting;
@@ -69,12 +59,44 @@ public class EsUtils {
     public static TransportClient getClient(){
         return client;
     }
+    public static boolean existDoc(String indexName,String area_code,String date_str) throws Exception {
+        SearchHits hpold = EsUtils.matchQuery(indexName, area_code, date_str);
 
+        System.out.println(hpold.totalHits>=1);
+        if(hpold.totalHits>=1){
+            System.out.println(indexName+"已存在该值，不同步");
+            return true;
+        }
+        System.out.println(indexName+"不存在该值，同步中");
+        return false;
+    }
+    //查询是否存在
+    public static SearchHits matchQuery(String indexName, String area_code, String date_str) throws Exception{
+
+       /* QueryBuilder queryBuilder=QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("author","周星驰"))
+                .mustNot(QueryBuilders.matchQuery("title","梁朝伟"))
+                .should(QueryBuilders.matchQuery("title","影帝"))
+                .filter(QueryBuilders.rangeQuery("id").gte("1"));*/
+        QueryBuilder queryBuilder=QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("area_code",area_code))
+                .must(QueryBuilders.matchQuery("date_str",date_str));
+
+        SearchRequestBuilder index = client.prepareSearch(indexName).setQuery(queryBuilder).setSize(10);
+        SearchHits hits = index.get().getHits();
+        /*for (SearchHit hit:hits
+                ) {
+            System.out.println(hits);
+            System.out.println(hit.getSourceAsString());
+        }*/
+        return hits;
+    }
  //创建结构 测试版本
 //通过maps<name,type>创建结构
     public static void createStudentIndex(TransportClient client ,Map<String,String> maps,String indexName,String type) throws Exception {
         boolean existsIndex = isExistsIndex(indexName);
         if(existsIndex){
+            System.out.println("已经存在该索引");
             return;
         }
 
@@ -166,7 +188,7 @@ public class EsUtils {
     }
     //插入数据根据实体
     //@Test
-    public static void addDoc(Class clazz,List datas,TransportClient client) throws Exception {
+    public static void addDoc(Class clazz,List datas,TransportClient client,String indexName,String type) throws Exception {
         Field[] declaredFields = clazz.getDeclaredFields();
         //分页查找数据库记录
 
@@ -203,7 +225,7 @@ public class EsUtils {
                     }
                 }
                 builder = endObject.invoke(builder, null);
-                addEss(builder);
+                addEss(builder,indexName,type);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -214,6 +236,13 @@ public class EsUtils {
     }
 
     public static void addEss(Object builder){
+        XContentBuilder doc = (XContentBuilder) builder;
+
+        IndexResponse response = client.prepareIndex(indexName,type,null)//id为null，由ES自己生成
+                .setSource(doc).get();
+        System.out.println(response.status());//打印添加是否成功
+    }
+    public static void addEss(Object builder,String indexName,String type){
         XContentBuilder doc = (XContentBuilder) builder;
 
         IndexResponse response = client.prepareIndex(indexName,type,null)//id为null，由ES自己生成

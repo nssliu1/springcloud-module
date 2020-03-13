@@ -11,5 +11,5 @@ import java.util.List;
 public interface EsInput {
     Object buildStruct(Object client, Class clazz,String indexName,String typeName);
     Object saveData(Object client,Class clazz,Object data);
-    Object saveDatas(Object client,Class clazz,List datas);
+    Object saveDatas(Object client,Class clazz,List datas,String indexName,String type);
 }

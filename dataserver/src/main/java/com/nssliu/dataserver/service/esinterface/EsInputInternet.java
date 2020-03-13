@@ -34,9 +34,9 @@ public class EsInputInternet implements EsInput{
     }
 
     @Override
-    public Object saveDatas(Object client, Class clazz, List datas) {
+    public Object saveDatas(Object client, Class clazz, List datas,String indexName,String type) {
         try{
-            EsUtils.addDoc(clazz,datas,(TransportClient)client);
+            EsUtils.addDoc(clazz,datas,(TransportClient)client,indexName,type);
 
         }catch (Exception e){
 
