@@ -1,18 +1,21 @@
-package com.nssliu.dataserver.utils.annotations;
+package com.nssliu.dataserver.trueversion;
 
-import com.nssliu.dataserver.entity.EsData;
-import com.nssliu.dataserver.entity.Smdtv_1;
-import com.nssliu.dataserver.service.JdbcGetData;
+import com.nssliu.dataserver.entity.*;
+import com.nssliu.dataserver.trueversion.annotations.Group;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
+import com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttp;
+import com.nssliu.dataserver.trueversion.entity.CallBackEntity;
+import com.nssliu.dataserver.trueversion.entity.JavaEsType;
+import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.es.EsUtil;
 import com.nssliu.dataserver.utils.time.TimeUtil;
-import com.sun.jmx.snmp.Timestamp;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -23,12 +26,81 @@ import java.util.*;
  * http抓取，将数据和配置数据一起解析存入list,
  * 将互联网访问接口解析的fastjaon作为一个用户可更改的java类
  */
-public class TestAnno {
-    public static void main(String[] args) {
-        Field[] fields = EsData.class.getDeclaredFields();
+public class NewJavaToEsPoint {
+    private static GetListForHttp getListForHttp;
+
+    static {
+        try {
+            try {
+                getListForHttp = (GetListForHttp)Class.forName(PropertiesUtil.getProperties_1("eshttpImplement")).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void testCreateIndex(String classFullName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+
+        //GetListForHttp getListForHttp = new GetListForHttpAqi();
+        GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
+        CallBackEntity creatinformation = getListForHttp.getCreatinformation();
+
+        createIndex(creatinformation.getIndexName(),creatinformation.getType(),creatinformation.getClazz());
+
+    }
+
+    public static void testSyncData(String classFullName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        //GetListForHttp getListForHttp = new GetListForHttpAqi();
+        GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
+        CallBackEntity callBackEntity = getListForHttp.getList();
+
+        syncData(callBackEntity.getIndexName(),callBackEntity.getType(),callBackEntity.getClazz(),callBackEntity.getList());
+
+    }
+    @Test
+    public void testCreateIndex() throws InstantiationException, IllegalAccessException {
+
+        //GetListForHttp getListForHttp = new GetListForHttpAqi();
+        CallBackEntity creatinformation = getListForHttp.getCreatinformation();
+
+        createIndex(creatinformation.getIndexName(),creatinformation.getType(),creatinformation.getClazz());
+
+    }
+    @Test
+    public void testSyncData() throws InstantiationException, IllegalAccessException {
+        //GetListForHttp getListForHttp = new GetListForHttpAqi();
+        CallBackEntity callBackEntity = getListForHttp.getList();
+
+        syncData(callBackEntity.getIndexName(),callBackEntity.getType(),callBackEntity.getClazz(),callBackEntity.getList());
+
+    }
+
+
+    public static void createIndex(String indexName,String type,Class clazz) throws IllegalAccessException, InstantiationException {
+        JavaEsType classify = classify(clazz);
+        reduceMapping(classify.getGroupMap(),classify.getFieldsList(),indexName,type);
+    }
+
+    public static void syncData(String indexName,String type,Class clazz,List list) throws InstantiationException, IllegalAccessException {
+        JavaEsType classify = classify(clazz);
+
+
+        saveData(classify.getGroupMap(),classify.getFieldsList(),list,indexName,type);
+    }
+
+
+
+    public static JavaEsType classify(Class clazz) throws InstantiationException, IllegalAccessException {
+
+        Field[] fields = clazz.getDeclaredFields();
+
         Map<String,List<Field>> groupMap = new HashMap<>();
         List<Field> fieldsList = new ArrayList<Field>();
-//        List<Field> group = new ArrayList<Field>();
+
         for (Field field: fields){
             field.setAccessible(true);
             TableFieldDetails saveField = field.getDeclaredAnnotation(TableFieldDetails.class);
@@ -50,16 +122,9 @@ public class TestAnno {
                     fieldsList.add(field);
                 }
                 field.setAccessible(true);
-                /*System.out.println(annotation1.groupName());
-                TableFieldDetails annotation = field.getAnnotation(TableFieldDetails.class);
-                if(annotation!=null){
-                    System.out.println(annotation.esName());
-                }*/
             }
         }
-        reduceMapping(groupMap,fieldsList);
-        saveData(groupMap,fieldsList,getList());
-
+       return new JavaEsType(groupMap,fieldsList);
 
     }
     public static List getList(){
@@ -85,7 +150,7 @@ public class TestAnno {
         list.add(esData1);
         return list;
     }
-    public static void saveData(Map<String,List<Field>> groupMap,List<Field> fieldsList,List list){
+    public static void saveData(Map<String,List<Field>> groupMap,List<Field> fieldsList,List list,String indexName,String type){
         try {
             Class<XContentBuilder> xContentBuilderClass = XContentBuilder.class;
             Method startObject = xContentBuilderClass.getDeclaredMethod("startObject",null);
@@ -114,7 +179,7 @@ public class TestAnno {
                     //添加数据
 
 
-                    EsUtil.addEss(xb,"aqi","supermap");
+                    EsUtil.addEss(xb,indexName,type);
 
 
                 }
@@ -171,12 +236,12 @@ public class TestAnno {
         return builder;
     }
 
-    public static void reduceMapping(Map<String,List<Field>> groupMap,List<Field> fieldsList){
+    public static void reduceMapping(Map<String,List<Field>> groupMap,List<Field> fieldsList,String indexName,String type){
 
-        createIndex(groupMap,fieldsList);
+        createIndex(groupMap,fieldsList,indexName,type);
     }
 
-    public static void createIndex(Map<String,List<Field>> groupMap,List<Field> fieldsList){
+    public static void createIndex(Map<String,List<Field>> groupMap,List<Field> fieldsList,String indexName,String type){
         System.out.println(groupMap);
         System.out.println(fieldsList);
         try {
@@ -205,12 +270,12 @@ public class TestAnno {
 
 
             XContentBuilder mapping = (XContentBuilder)builder;
-            boolean existsIndex = EsUtil.isExistsIndex("aqi");
+            boolean existsIndex = EsUtil.isExistsIndex(indexName);
             if(existsIndex){
                 return;
             }
             //EsUtil.addEss(builder);
-            EsUtil.createIndex(mapping,"aqi","supermap");
+            EsUtil.createIndex(mapping,indexName,type);
         }catch (Exception e){
             e.printStackTrace();
         }

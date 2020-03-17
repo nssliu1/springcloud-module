@@ -23,7 +23,7 @@ import java.util.*;
  * @author liuzhiheng
  * @version 1.0
  * @date 2020/2/26 14:57
- * @describe:
+ * @describe: 整个都是同步二手房
  */
 public class TestAll {
     @Test

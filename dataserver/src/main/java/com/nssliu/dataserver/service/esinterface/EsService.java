@@ -152,14 +152,26 @@ public class EsService {
             List<Object> listdata2 = new ArrayList<>();
             Map map = (Map) childs.get(j);
             String chiNames = (String) map.get("names");
+            System.out.println(chiNames);
+            System.out.println(chiNames);
+            System.out.println(chiNames);
+            System.out.println(chiNames);
             String chiCode =  map.get("code").toString();
 
             s1 = HttpRequests.sendGet(httpUriOld + "?city=" + shortName + "&proptype=11&district=" + chiNames + "&town=&sinceyear=5&flag=1&based=price&dtype=line");
             JSONArray rows1 = JSON.parseArray(JSON.parseObject(JSON.parseArray(s1).get(1).toString()).get("rows").toString());
 
-            for(int i =0;i<rows.size();i++){
-                String month = (String) JSON.parseObject(rows.get(i).toString()).get("month").toString().replace("-",".");
-                Double d = new Double(JSON.parseObject(rows.get(i).toString()).get("data").toString());
+            for(int i =0;i<rows1.size();i++){
+                String month = (String) JSON.parseObject(rows1.get(i).toString()).get("month").toString().replace("-",".");
+                Double d;
+                if(JSON.parseObject(rows1.get(i).toString()).get("data")==null){
+
+                    //d = new Double(JSON.parseObject(rows1.get(i).toString()).get("value").toString());
+                    d = new Double(0);
+                }else {
+
+                    d = new Double(JSON.parseObject(rows1.get(i).toString()).get("data").toString());
+                }
                 Object o = clazz.newInstance();
                 area_name.set(o,chiNames);
                 area_code.set(o,chiCode);

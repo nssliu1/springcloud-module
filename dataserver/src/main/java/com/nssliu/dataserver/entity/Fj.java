@@ -1,6 +1,6 @@
 package com.nssliu.dataserver.entity;
 
-import java.util.Date;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 
 /**
  * @author liuzhiheng
@@ -9,10 +9,15 @@ import java.util.Date;
  * @describe:
  */
 public class Fj {
+    @TableFieldDetails(esName = "area_name",esType = "text")
     private String area_name;
+    @TableFieldDetails(esName = "area_code",esType = "text")
     private String area_code;
+    @TableFieldDetails(esName = "date_date",esType = "date",param = "format",paramDetail = "yyyy.MM")
     private String date_date;
+    @TableFieldDetails(esName = "date_str",esType = "text")
     private String date_str;
+    @TableFieldDetails(esName = "price",esType = "double")
     private Double price;
 
     public Fj(String area_name, String area_code, String date_date, String date_str, Double price) {

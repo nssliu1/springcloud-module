@@ -1,4 +1,4 @@
-package com.nssliu.dataserver.utils.annotations;
+package com.nssliu.dataserver.trueversion.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

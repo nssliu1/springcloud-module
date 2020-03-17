@@ -1,9 +1,7 @@
 package com.nssliu.dataserver.entity;
 
-import com.nssliu.dataserver.utils.annotations.Group;
-import com.nssliu.dataserver.utils.annotations.TableFieldDetails;
-
-import java.util.Date;
+import com.nssliu.dataserver.trueversion.annotations.Group;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 
 /**
  * @author liuzhiheng

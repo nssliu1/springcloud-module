@@ -2,12 +2,7 @@
 
 import java.util.Date;
 
-/**
- * @author liuzhiheng
- * @version 1.0
- * @date 2020/2/23 22:36
- * @describe: 
- */
+
 public class EsData {
     @TableFieldDetails(esName = "Name",esType = "text")
     private String name;

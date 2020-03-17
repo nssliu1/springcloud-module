@@ -1,7 +1,7 @@
 package com.nssliu.dataserver.entity;
 
-import com.nssliu.dataserver.utils.annotations.Group;
-import com.nssliu.dataserver.utils.annotations.TableFieldDetails;
+import com.nssliu.dataserver.trueversion.annotations.Group;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 
 public class Smdtv_1 {
 
