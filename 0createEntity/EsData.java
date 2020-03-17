@@ -1,23 +1,10 @@
-package com.nssliu.dataserver.entity;
-
-import com.nssliu.dataserver.utils.annotations.Group;
-import com.nssliu.dataserver.utils.annotations.TableFieldDetails;
-
-import java.util.Date;
-
-/**
- * @author liuzhiheng
- * @version 1.0
- * @date 2020/2/23 22:36
- * @describe: 不加@TableFieldDetails注解不会创建该属性，@Group是子级嵌套
- */
-public class EsData {
+﻿public class EsData {
     @TableFieldDetails(esName = "Name",esType = "text")
     private String name;
 
     private String details;
     @TableFieldDetails(esName = "dates",esType = "date",param = "format",paramDetail = "yyyy.MM")
-    private String dates;//date在java中要处理为String,es中处理为date并添加format，这样就会自动
+    private String dates;
     @Group(groupName = "location",groupType = "geo_point")
     @TableFieldDetails(esName = "lat",esType = "double")
     private double smx;

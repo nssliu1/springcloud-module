@@ -220,6 +220,13 @@ public class EsUtil {
 
     }
 
+    public static void createIndex(XContentBuilder mapping,String indexName,String type){
+        CreateIndexRequestBuilder cib = client.admin().indices().prepareCreate(indexName);
+        //XContentBuilder mapping = null;
+        cib.addMapping(type, mapping);
+        cib.execute().actionGet();
+    }
+
     public static XContentBuilder entityToBuilder(Map<String,String> maps) throws Exception {
 
 
@@ -403,6 +410,18 @@ public class EsUtil {
 
     }
     public static void addEss(Object builder){
+        XContentBuilder doc = (XContentBuilder) builder;
+        //添加一个doc
+        /*try {
+            //System.out.println(doc.string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+        IndexResponse response = client.prepareIndex(indexName,type,null)//id为null，由ES自己生成
+                .setSource(doc).get();
+        //System.out.println(response.status());//打印添加是否成功
+    }
+    public static void addEss(Object builder,String indexName,String type){
         XContentBuilder doc = (XContentBuilder) builder;
         //添加一个doc
         /*try {

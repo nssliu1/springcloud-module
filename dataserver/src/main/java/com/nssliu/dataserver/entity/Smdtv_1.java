@@ -1,16 +1,23 @@
 package com.nssliu.dataserver.entity;
 
+import com.nssliu.dataserver.utils.annotations.Group;
+import com.nssliu.dataserver.utils.annotations.TableFieldDetails;
+
 public class Smdtv_1 {
 
 	static{
 		System.out.println("nssliu");
 	}
-
+	@TableFieldDetails(esType = "integer",esName = "SMID")
+	@Group(groupName = "location",groupType = "")
 	private Integer smid;
+	@Group(groupName = "location",groupType = "")
 	private Integer markersymbolid;
 	private String condid;
+	@Group(groupName = "location1",groupType = "")
 	private String crid;
 	private String passage;
+	@Group(groupName = "location1",groupType = "")
 	private String sgnl_loction;
 	private Integer linecolor;
 	private String condtype;

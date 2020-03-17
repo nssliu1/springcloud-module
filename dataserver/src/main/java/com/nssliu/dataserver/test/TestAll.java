@@ -199,4 +199,10 @@ public class TestAll {
 
 
     }
+
+    @Test
+    public void  aa(){
+        Class<Object> objectClass = Object.class;
+        //objectClass.getDeclaredMethod()
+    }
 }
