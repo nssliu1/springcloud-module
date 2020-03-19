@@ -52,4 +52,10 @@ public class TimeUtil {
         res = simpleDateFormat.format(date);
         return res.toString();
     }
+
+    public static String nowToString(String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);//设置日期格式
+        Date now = new Date();
+        return sdf.format(now);
+    }
 }

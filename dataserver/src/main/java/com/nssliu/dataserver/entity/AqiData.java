@@ -31,7 +31,7 @@ public class AqiData {
     private double aqi;
     @TableFieldDetails(esName = "level",esType = "text")
     private String level;
-    @TableFieldDetails(esName = "primary_pollutant",esType = "text")
+    //@TableFieldDetails(esName = "primary_pollutant",esType = "text")
     private String primary_pollutant;
     @TableFieldDetails(esName = "pm25",esType = "double")
     private double pm25;

@@ -1,10 +1,20 @@
 package com.nssliu.dataserver.trueversion.jsonDispose;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.nssliu.dataserver.entity.AqiData;
 import com.nssliu.dataserver.entity.Fj;
+import com.nssliu.dataserver.entity.ScenePoint;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 import com.nssliu.dataserver.trueversion.entity.CallBackEntity;
+import com.nssliu.dataserver.utils.HttpRequests;
+import com.nssliu.dataserver.utils.python.ExecPythonUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuzhiheng
@@ -13,41 +23,80 @@ import java.util.List;
  * @describe:
  */
 public class GetListForHttpAqi implements  GetListForHttp{
+    static String indexName = "aqi";
+    static String indexType = "cc";
+    static Class clazz = AqiData.class;
+
     @Override
     public CallBackEntity getCreatinformation() {
-        return new CallBackEntity("fj2","cc","",Fj.class,"",null);
+        return new CallBackEntity(indexName,indexType,"",clazz,"",null);
     }
 
     @Override
     public CallBackEntity getList() throws IllegalAccessException, InstantiationException {
         CallBackEntity callBackEntity = new CallBackEntity();
-        callBackEntity.setIndexName("fj2");
-        callBackEntity.setType("cc");
-        callBackEntity.setClazz(Fj.class);
+        callBackEntity.setIndexName(indexName);
+        callBackEntity.setType(indexType);
+        callBackEntity.setClazz(clazz);
         List list = new ArrayList();
-        Fj fj = new Fj();
+        try {
 
-        fj.setArea_code("01");
-        fj.setArea_name("长春");
-        fj.setDate_date("2020.05");
-        fj.setPrice(new Double(2000000));
+            String s = ExecPythonUtils.execPython("E:\\supermap\\work\\2020\\长春\\空气质量\\", "cc.py");
+            //System.out.println(s);
+            JSONObject jsonObject = JSON.parseObject(s);
+            String time = jsonObject.get("updateTime").toString();
+            System.out.println(time);
+            JSONObject jsonObject1 = JSON.parseObject(jsonObject.get("data").toString());
+            System.out.println(jsonObject1.get("岱山公园"));
+            Iterator<Map.Entry<String, Object>> iterator = jsonObject1.entrySet().iterator();
+            Class<AqiData> aqiDataClass = clazz;
+            while (iterator.hasNext()){
+                Map.Entry entry = (Map.Entry)iterator.next();
+                System.out.println(entry.getKey());
+                System.out.println(entry.getValue());
+                Iterator<Map.Entry<String, Object>> iterator1 = JSON.parseObject(entry.getValue().toString()).entrySet().iterator();
 
-        list.add(fj);
+                AqiData aqiData = aqiDataClass.newInstance();
+                Field updateTime = aqiDataClass.getDeclaredField("updateTime");
+                updateTime.setAccessible(true);
+                updateTime.set(aqiData,time);
+                while (iterator1.hasNext()){
+                    Map.Entry entry1 = (Map.Entry)iterator1.next();
+                    Field field = aqiDataClass.getDeclaredField(entry1.getKey().toString());
+                    field.setAccessible(true);
+                    String typeName = field.getGenericType().getTypeName();
 
-        /*Class<AqiData> aqiDataClass = AqiData.class;
-        List<AqiData> list = new ArrayList<>();
+                    TableFieldDetails annotation = field.getAnnotation(TableFieldDetails.class);
+                    if(annotation!=null){
 
-        AqiData aqiData = aqiDataClass.newInstance();
-        aqiData.setAqi(1.11);
+                        if(typeName.equals("double")){
+                            if(entry1.getValue()!=null && !"".equals(entry1.getValue())){
 
-        aqiData.setSmx(1);
-        aqiData.setSmy(1);
-        aqiData.setSmx1(1);
-        aqiData.setSmy1(1);
-        aqiData.setUpdateTime("2020-11-01 15:13:32");
-        aqiData.setAqi(1);
-        list.add(aqiData);*/
-        callBackEntity.setList(list);
+                                field.set(aqiData,new Double(entry1.getValue().toString()));
+                            }
+                        }else {
+                            if(entry1.getValue()!=null && !"".equals(entry1.getValue())){
+
+                                field.set(aqiData,entry1.getValue().toString());
+                            }
+
+                        }
+                    }
+
+                    System.out.print(entry1.getKey()+":"+entry1.getValue());
+                    System.out.println();
+
+                }
+                list.add(aqiData);
+            }
+
+
+            callBackEntity.setList(list);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         return callBackEntity;
     }
 }

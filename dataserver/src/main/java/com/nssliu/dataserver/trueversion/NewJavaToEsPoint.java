@@ -48,6 +48,10 @@ public class NewJavaToEsPoint {
         //GetListForHttp getListForHttp = new GetListForHttpAqi();
         GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
         CallBackEntity creatinformation = getListForHttp.getCreatinformation();
+        if(creatinformation==null){
+            System.out.println("CallBackEntity不可为空");
+            return;
+        }
 
         createIndex(creatinformation.getIndexName(),creatinformation.getType(),creatinformation.getClazz());
 
@@ -57,7 +61,10 @@ public class NewJavaToEsPoint {
         //GetListForHttp getListForHttp = new GetListForHttpAqi();
         GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
         CallBackEntity callBackEntity = getListForHttp.getList();
-
+        if(callBackEntity==null){
+            System.out.println("CallBackEntity不可为空");
+            return;
+        }
         syncData(callBackEntity.getIndexName(),callBackEntity.getType(),callBackEntity.getClazz(),callBackEntity.getList());
 
     }
@@ -66,7 +73,10 @@ public class NewJavaToEsPoint {
 
         //GetListForHttp getListForHttp = new GetListForHttpAqi();
         CallBackEntity creatinformation = getListForHttp.getCreatinformation();
-
+        if(creatinformation==null){
+            System.out.println("CallBackEntity不可为空");
+            return;
+        }
         createIndex(creatinformation.getIndexName(),creatinformation.getType(),creatinformation.getClazz());
 
     }
@@ -74,7 +84,10 @@ public class NewJavaToEsPoint {
     public void testSyncData() throws InstantiationException, IllegalAccessException {
         //GetListForHttp getListForHttp = new GetListForHttpAqi();
         CallBackEntity callBackEntity = getListForHttp.getList();
-
+        if(callBackEntity==null){
+            System.out.println("CallBackEntity不可为空");
+            return;
+        }
         syncData(callBackEntity.getIndexName(),callBackEntity.getType(),callBackEntity.getClazz(),callBackEntity.getList());
 
     }
