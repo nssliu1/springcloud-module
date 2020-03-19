@@ -13,12 +13,14 @@ public class Bus {
     private String description;
     @TableFieldDetails(esName = "evaluation",esType = "text")
     private String evaluation;
-    @TableFieldDetails(esName = "roads",esType = "text")
+    //@TableFieldDetails(esName = "roads",esType = "text")
     private String roads;
     @TableFieldDetails(esName = "dateTime",esType = "date",param = "format",paramDetail = "yyyy-MM-dd")
     private String dateTime;
     @TableFieldDetails(esName = "roadName",esType = "text")
     private String roadName;
+    @TableFieldDetails(esName = "status",esType = "text")
+    private String status;
 
     public Bus() {
     }
@@ -28,6 +30,15 @@ public class Bus {
         this.evaluation = evaluation;
         this.roads = roads;
         this.dateTime = dateTime;
+    }
+
+    public Bus(String description, String evaluation, String roads, String dateTime, String roadName, String status) {
+        this.description = description;
+        this.evaluation = evaluation;
+        this.roads = roads;
+        this.dateTime = dateTime;
+        this.roadName = roadName;
+        this.status = status;
     }
 
     public String getRoadName() {
@@ -72,6 +83,14 @@ public class Bus {
 
     public String getDateTime() {
         return dateTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setDateTime(String dateTime) {

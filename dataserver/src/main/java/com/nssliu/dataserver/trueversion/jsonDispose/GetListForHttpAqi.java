@@ -10,6 +10,7 @@ import com.nssliu.dataserver.trueversion.entity.CallBackEntity;
 import com.nssliu.dataserver.utils.HttpRequests;
 import com.nssliu.dataserver.utils.python.ExecPythonUtils;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,9 +40,11 @@ public class GetListForHttpAqi implements  GetListForHttp{
         callBackEntity.setType(indexType);
         callBackEntity.setClazz(clazz);
         List list = new ArrayList();
+
+
         try {
 
-            String s = ExecPythonUtils.execPython("E:\\supermap\\work\\2020\\长春\\空气质量\\", "cc.py");
+            String s = ExecPythonUtils.execPython("D:\\0liuzh\\0study\\0githubs\\allproject\\dataserver\\src\\main\\resources\\", "cc.py");
             //System.out.println(s);
             JSONObject jsonObject = JSON.parseObject(s);
             String time = jsonObject.get("updateTime").toString();
@@ -71,8 +74,13 @@ public class GetListForHttpAqi implements  GetListForHttp{
 
                         if(typeName.equals("double")){
                             if(entry1.getValue()!=null && !"".equals(entry1.getValue())){
+                                if("-".equals(entry1.getValue())){
 
-                                field.set(aqiData,new Double(entry1.getValue().toString()));
+                                    field.set(aqiData,new Double(0));//监测站无数据
+                                }else {
+
+                                    field.set(aqiData,new Double(entry1.getValue().toString()));
+                                }
                             }
                         }else {
                             if(entry1.getValue()!=null && !"".equals(entry1.getValue())){
@@ -84,7 +92,6 @@ public class GetListForHttpAqi implements  GetListForHttp{
                     }
 
                     System.out.print(entry1.getKey()+":"+entry1.getValue());
-                    System.out.println();
 
                 }
                 list.add(aqiData);

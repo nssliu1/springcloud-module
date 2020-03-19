@@ -43,16 +43,18 @@ public class GetListForHttpBus implements GetListForHttp {
 
         for (String busName:strings){
             Bus bus = new Bus();
-            String s = HttpRequests.sendGet("https://restapi.amap.com/v3/traffic/status/road?&key=2598b89dcd9b01d20053e76bff151a00&name="+busName+"&adcode=220100&extensions=all");
+            String s = HttpRequests.sendGet("https://restapi.amap.com/v3/traffic/status/road?&key=2598b89dcd9b01d20053e76bff151a00&name="+busName+"&adcode=220100");//&extensions=all
             JSONObject jsonObject = JSON.parseObject(s);
             String root = jsonObject.get("trafficinfo").toString();
             String description = JSON.parseObject(root).get("description").toString();
             String evaluation = JSON.parseObject(root).get("evaluation").toString();
-            String roads = JSON.parseObject(root).get("roads").toString();
+            //String roads = JSON.parseObject(root).get("roads").toString();
+            String status = JSON.parseObject(evaluation).get("status").toString();
             bus.setDateTime(TimeUtil.nowToString("yyyy-MM-dd"));
             bus.setDescription(description);
             bus.setEvaluation(evaluation);
-            bus.setRoads(roads);
+            bus.setStatus(status);
+            //bus.setRoads(roads);
             bus.setRoadName(busName);
             list.add(bus);
         }
