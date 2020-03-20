@@ -25,7 +25,7 @@ import java.util.Map;
  * @describe:
  */
 public class GetListForHttpHPOld implements  GetListForHttp{
-    static String indexName = "old";
+    static String indexName = "hpold";
     static String indexType = "cc";
     static Class clazz = Fj.class;
     @Override

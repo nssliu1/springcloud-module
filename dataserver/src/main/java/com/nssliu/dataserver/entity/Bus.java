@@ -1,5 +1,6 @@
 package com.nssliu.dataserver.entity;
 
+import com.nssliu.dataserver.trueversion.annotations.IsExistDoc;
 import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 
 /**
@@ -16,8 +17,10 @@ public class Bus {
     //@TableFieldDetails(esName = "roads",esType = "text")
     private String roads;
     @TableFieldDetails(esName = "dateTime",esType = "date",param = "format",paramDetail = "yyyy-MM-dd")
+    @IsExistDoc
     private String dateTime;
     @TableFieldDetails(esName = "roadName",esType = "text")
+    @IsExistDoc
     private String roadName;
     @TableFieldDetails(esName = "status",esType = "text")
     private String status;

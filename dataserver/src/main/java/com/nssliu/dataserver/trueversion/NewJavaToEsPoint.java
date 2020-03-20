@@ -100,9 +100,24 @@ public class NewJavaToEsPoint {
 
     public static void syncData(String indexName,String type,Class clazz,List list) throws InstantiationException, IllegalAccessException {
         JavaEsType classify = classify(clazz);
+        //处理需要存储的数据
+        List needSave = getNeedSave(indexName, clazz, list);
+        saveData(classify.getGroupMap(),classify.getFieldsList(),needSave,indexName,type);
+    }
 
+    public static List getNeedSave(String indexName,Class clazz,List list){
+        List needSaveList = new ArrayList();
+        try {
+            for (Object obj: list){
+                boolean exit = EsUtil.matchQuery(indexName, clazz, obj);//false是不判断或不存在，true是已经存在
+                if(!exit)
+                    needSaveList.add(obj);
+            }
+        }catch (Exception e){
 
-        saveData(classify.getGroupMap(),classify.getFieldsList(),list,indexName,type);
+        }
+        return needSaveList;
+
     }
 
 

@@ -1,8 +1,11 @@
 package com.nssliu.dataserver.utils.es;
 
+import com.nssliu.dataserver.entity.AqiData;
 import com.nssliu.dataserver.entity.Person;
 import com.nssliu.dataserver.entity.Table;
 import com.nssliu.dataserver.service.JdbcGetData;
+import com.nssliu.dataserver.trueversion.annotations.IsExistDoc;
+import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.classloader.MyClassLoader1;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -11,6 +14,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRespon
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -19,6 +23,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -509,6 +515,72 @@ public class EsUtil {
             e.printStackTrace();
         }
         return builder;
+    }
+
+    //查询是否存在
+    public static boolean matchQuery(String indexName, Class clazz,Object obj) throws Exception{
+        SearchHits hits=null;
+        boolean isExist = false;
+        try {
+            QueryBuilder queryBuilder=QueryBuilders.boolQuery();
+            Class<? extends QueryBuilder> aClass = queryBuilder.getClass();
+            Method must = aClass.getMethod("must", QueryBuilder.class);
+            Field[] declaredFields = clazz.getDeclaredFields();
+            boolean isP = false;
+            for (Field field:declaredFields){
+                IsExistDoc annotation = field.getAnnotation(IsExistDoc.class);
+                if(annotation!=null){
+                    field.setAccessible(true);
+                    isP = true;
+                    TableFieldDetails annotation1 = field.getAnnotation(TableFieldDetails.class);
+
+                    queryBuilder = (QueryBuilder) must.invoke(queryBuilder,QueryBuilders.matchQuery(annotation1.esName(),field.get(obj)));
+                }
+            }
+
+            if(isP){
+                SearchRequestBuilder index = client.prepareSearch(indexName).setQuery(queryBuilder).setSize(2);
+                if(index.get().getHits().totalHits>=1){
+                    System.out.println(indexName+"已存在该值，不同步");
+                    isExist =  true;
+                }else {
+
+                    System.out.println(indexName+"不存在该值，同步中");
+                    isExist = false;
+                }
+            }else {
+                //不必要判断
+                isExist = false;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isExist;
+    }
+
+    @Test
+    public void testQuery() throws Exception {
+        AqiData aqiData = new AqiData();
+        aqiData.setPm25(31);
+        aqiData.setPm10(44);
+        boolean aqi = matchQuery("aqi", AqiData.class, aqiData);//false是不判断或不存在，true是已经存在
+        System.out.println(aqi);
+
+        /*try {
+            QueryBuilder queryBuilder=QueryBuilders.boolQuery();
+            Class<? extends QueryBuilder> aClass = queryBuilder.getClass();
+
+            Method must = aClass.getMethod("must", QueryBuilder.class);
+            queryBuilder = (QueryBuilder) must.invoke(queryBuilder,QueryBuilders.matchQuery("pm25","31"));
+            queryBuilder = (QueryBuilder) must.invoke(queryBuilder,QueryBuilders.matchQuery("pm10","44"));
+            SearchRequestBuilder index = client.prepareSearch("aqi").setQuery(queryBuilder).setSize(2);
+            SearchHits hits = index.get().getHits();
+            System.out.println(hits.totalHits);
+        }catch (Exception e){
+
+        }*/
     }
 
 }

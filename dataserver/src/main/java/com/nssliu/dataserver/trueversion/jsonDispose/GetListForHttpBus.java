@@ -32,7 +32,7 @@ public class GetListForHttpBus implements GetListForHttp {
     @Override
     public CallBackEntity getList() throws IllegalAccessException, InstantiationException {
         List<String> roadNames = new ArrayList<>();
-        String []rodsList = new String[]{"人民大街","解放大路","自由大路","前进大街","上海路"};
+        String []rodsList = new String[]{"人民大街","解放大路","自由大路","前进大街","上海路","延安大街","皓月大路","吉林大路","凯旋路","西安大路"};
         List<String> strings = Arrays.asList(rodsList);
 
         CallBackEntity callBackEntity = new CallBackEntity();

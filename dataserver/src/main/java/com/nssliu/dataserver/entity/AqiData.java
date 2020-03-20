@@ -1,6 +1,7 @@
 package com.nssliu.dataserver.entity;
 
 import com.nssliu.dataserver.trueversion.annotations.Group;
+import com.nssliu.dataserver.trueversion.annotations.IsExistDoc;
 import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 
 /**
@@ -11,21 +12,25 @@ import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
  */
 public class AqiData {
     @TableFieldDetails(esName = "lat",esType = "double")
-    @Group(groupName = "location",groupType = "geo_point")
+    //@Group(groupName = "location",groupType = "geo_point")
+    @IsExistDoc
     private double smx;
     @TableFieldDetails(esName = "lon",esType = "double")
-    @Group(groupName = "location",groupType = "geo_point")
+    //@Group(groupName = "location",groupType = "geo_point")
+    @IsExistDoc
     private double smy;
-    @TableFieldDetails(esName = "lat",esType = "double")
-    @Group(groupName = "location1",groupType = "geo_point")
+    @TableFieldDetails(esName = "lat1",esType = "double")
+    //@Group(groupName = "location1",groupType = "geo_point")
     private double smx1;
-    @Group(groupName = "location1",groupType = "geo_point")
-    @TableFieldDetails(esName = "lon",esType = "double")
+    //@Group(groupName = "location1",groupType = "geo_point")
+    @TableFieldDetails(esName = "lon1",esType = "double")
     private double smy1;
     //@TableFieldDetails(esName = "updateTime",esType = "date",param = "format",paramDetail = "yyyy-MM-dd hh:mm:ss")
     @TableFieldDetails(esName = "updateTime",esType = "date",param = "format",paramDetail = "yyyy-MM-dd HH:mm:ss")
+    @IsExistDoc
     private String updateTime;
     @TableFieldDetails(esName = "position_name",esType = "text")
+
     private String position_name;
     @TableFieldDetails(esName = "aqi",esType = "double")
     private double aqi;
@@ -39,7 +44,7 @@ public class AqiData {
     private double pm10;
     @TableFieldDetails(esName = "co",esType = "double")
     private double co;
-    @TableFieldDetails(esName = "no2",esType = "date")
+    @TableFieldDetails(esName = "no2",esType = "double")
     private double no2;
     @TableFieldDetails(esName = "o31h",esType = "double")
     private double o31h;

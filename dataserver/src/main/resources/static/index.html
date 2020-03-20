@@ -1,1 +1,138 @@
-<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>serverui</title><script type=text/javascript src=./static/jquery.min.js></script><script type=text/javascript src=./static/config/app-config.js></script><link href=/static/css/app.29d58d12b446348066d9090c4ea29d53.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/js/manifest.2ae2e69a05c33dfc65f8.js></script><script type=text/javascript src=/static/js/vendor.07e9ed60909ad446b3db.js></script><script type=text/javascript src=/static/js/app.5145ac5ef70f6186c037.js></script></body></html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>抓取数据</title>
+		<script type="text/javascript" src="./jquery.min.js"></script>
+		<style type="text/css">
+			.btnList{
+				width: 1200px;
+				margin:0 auto;
+				text-align: center;
+				margin-top: 150px;
+			}
+			button{
+				width: 110px;
+				height: 50px;
+				margin-left: 20px;
+				outline: none;
+				background-color: #e8828d; 
+				border: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="btnList">
+			<button type="button" class="air">aqi loop</button>
+			<button type="button" class="newHouse">newHouse loop</button>
+			<button type="button" class="oldHouse">oldHouse loop</button>
+			<button type="button" class="bus">bus loop</button>
+			<button type="button" class="scene">scene loop</button>
+		</div>
+		<script type="text/javascript">
+			let setData=[
+				{
+					name:["aqi loop","aqi stop"],
+					ele:$(".air"),
+					startData:{
+						taskName:"api",
+						time:5,
+						isloop:true,
+						classFullName:"com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttpAqi",
+					},
+					endData:{
+						taskName:"api"
+					}
+				},
+				{
+					name:["newHouse loop","newHouse stop"],
+					ele:$(".newHouse"),
+					startData:{
+						taskName:"newHouse",
+						time:0,
+						isloop:false,
+						classFullName:"com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttpHPNews",
+					},
+					endData:{
+						taskName:"newHouse"
+					}
+				},
+				{
+					name:["oldHouse loop","oldHouse stop"],
+					ele:$(".oldHouse"),
+					startData:{
+						taskName:"oldHouse",
+						time:0,
+						isloop:false,
+						classFullName:"com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttpHPOld",
+					},
+					endData:{
+						taskName:"oldHouse"
+					}
+				},
+				{
+					name:["bus loop","bus stop"],
+					ele:$(".bus"),
+					startData:{
+						taskName:"bus",
+						time:86400,
+						isloop:true,
+						classFullName:"com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttpBus",
+					},
+					endData:{
+						taskName:"bus"
+					}
+				},
+				{
+					name:["scene loop","scene stop"],
+					ele:$(".scene"),
+					startData:{
+						taskName:"scenePoint",
+						time:0,
+						isloop:false,
+						classFullName:"com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttpScenePoint",
+					},
+					endData:{
+						taskName:"scenePoint"
+					}
+				},
+			]
+			setData.forEach(function(item){
+				changeFun(item);
+			})
+			function changeFun(eleDatas){
+				let status=0;
+				(eleDatas.ele).click(function(){
+					if(status==0){
+						status=1; //启动
+						$(this).text((eleDatas.name)[1]);
+						$(this).css("background-color","#74d4c0");
+						//启动的接口
+						$.ajax({
+							type:"get",
+							url:"http://172.16.8.112:8766/EsForHttpController/registTask?",
+							data:eleDatas.startData,
+							success:function(res){
+								console.log(res)
+							}
+						})
+					}else{
+						status=0; //启动
+						$(this).text((eleDatas.name)[0]);
+						$(this).css("background-color","#e8828d");
+						//停止启动的接口
+						$.ajax({
+							type:"get",
+							url:"http://172.16.8.112:8766/EsForHttpController/cancelTask?",
+							data:eleDatas.endData,
+							success:function(res){
+								console.log(res)
+							}
+						})
+					}
+				})
+			}
+			
+		</script>
+	</body>
+</html>

@@ -8,6 +8,7 @@ import com.nssliu.dataserver.entity.ScenePoint;
 import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 import com.nssliu.dataserver.trueversion.entity.CallBackEntity;
 import com.nssliu.dataserver.utils.HttpRequests;
+import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.python.ExecPythonUtils;
 
 import java.io.File;
@@ -43,8 +44,9 @@ public class GetListForHttpAqi implements  GetListForHttp{
 
 
         try {
+            String aqiPythonPath = PropertiesUtil.getProperties_1("AQIPythonPath");
 
-            String s = ExecPythonUtils.execPython("D:\\0liuzh\\0study\\0githubs\\allproject\\dataserver\\src\\main\\resources\\", "cc.py");
+            String s = ExecPythonUtils.execPython(aqiPythonPath, "cc.py");
             //System.out.println(s);
             JSONObject jsonObject = JSON.parseObject(s);
             String time = jsonObject.get("updateTime").toString();

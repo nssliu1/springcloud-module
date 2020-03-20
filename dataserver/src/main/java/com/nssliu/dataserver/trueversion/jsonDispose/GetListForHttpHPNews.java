@@ -25,7 +25,7 @@ import java.util.Map;
  * @describe:
  */
 public class GetListForHttpHPNews implements  GetListForHttp{
-    static String indexName = "new";
+    static String indexName = "hpnew";
     static String indexType = "cc";
     static Class clazz = Fj.class;
     @Override
