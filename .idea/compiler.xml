@@ -10,6 +10,7 @@
         <module name="entity" />
         <module name="eureka" />
         <module name="feign-customer" />
+        <module name="rabbitmq" />
         <module name="rest-ribbon-customer" />
         <module name="server" />
       </profile>
@@ -20,6 +21,7 @@
       <module name="entity" target="1.7" />
       <module name="eureka" target="1.8" />
       <module name="feign-customer" target="1.8" />
+      <module name="rabbitmq" target="1.8" />
       <module name="rest-ribbon-customer" target="1.8" />
       <module name="server" target="1.8" />
       <module name="springcloudmodule" target="1.7" />

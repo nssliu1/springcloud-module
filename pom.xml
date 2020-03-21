@@ -14,6 +14,7 @@
       <module>dataserver</module>
       <module>feign-customer</module>
       <module>rest-ribbon-customer</module>
+      <module>rabbitmq</module>
     </modules>
     <packaging>pom</packaging>
 
