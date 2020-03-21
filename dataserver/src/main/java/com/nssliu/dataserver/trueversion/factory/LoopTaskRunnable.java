@@ -10,8 +10,9 @@ import com.nssliu.dataserver.trueversion.jsonDispose.GetListForHttp;
  */
 public class LoopTaskRunnable implements LoopTask<GetListForHttp> {
     @Override
-    public GetListForHttp getTask(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        GetListForHttp getListForHttp = (GetListForHttp)Class.forName(name).newInstance();
+    public GetListForHttp getTask(String classFullName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
+        //GetListForHttp getListForHttp = (GetListForHttp)Class.forName(classFullName).newInstance();
         return getListForHttp;
     }
 }

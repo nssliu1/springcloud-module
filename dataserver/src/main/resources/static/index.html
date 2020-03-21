@@ -110,7 +110,7 @@
 						//启动的接口
 						$.ajax({
 							type:"get",
-							url:"http://172.16.8.112:8766/EsForHttpController/registTask?",
+							url:"http://127.0.0.1:8766/EsForHttpController/registTask?",
 							data:eleDatas.startData,
 							success:function(res){
 								console.log(res)
@@ -123,7 +123,7 @@
 						//停止启动的接口
 						$.ajax({
 							type:"get",
-							url:"http://172.16.8.112:8766/EsForHttpController/cancelTask?",
+							url:"http://127.0.0.1:8766/EsForHttpController/cancelTask?",
 							data:eleDatas.endData,
 							success:function(res){
 								console.log(res)
