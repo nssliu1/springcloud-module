@@ -8,6 +8,7 @@ import com.nssliu.dataserver.entity.ScenePoint;
 import com.nssliu.dataserver.trueversion.annotations.TableFieldDetails;
 import com.nssliu.dataserver.trueversion.entity.CallBackEntity;
 import com.nssliu.dataserver.utils.HttpRequests;
+import com.nssliu.dataserver.utils.PathUtils;
 import com.nssliu.dataserver.utils.PropertiesUtils.PropertiesUtil;
 import com.nssliu.dataserver.utils.python.ExecPythonUtils;
 
@@ -44,7 +45,10 @@ public class GetListForHttpAqi implements  GetListForHttp{
 
 
         try {
-            String aqiPythonPath = PropertiesUtil.getProperties_1("AQIPythonPath");
+            //String aqiPythonPath = PropertiesUtil.getProperties_1("AQIPythonPath");
+            String aqiPythonPath = PathUtils.getPath();
+            aqiPythonPath = aqiPythonPath.replace("ile:/", "").replace("/",File.separator);
+            aqiPythonPath+=File.separator;
 
             String s = ExecPythonUtils.execPython(aqiPythonPath, "cc.py");
             //System.out.println(s);
